@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+   
+<mapper namespace="question">
+
+<resultMap id="questionResult" type="java.util.HashMap">
+		<!-- property는 화면단에서 쓸 이름, column은 데이터컬럼명이랑 동일 -->
+		<result property="q_Content" column="q_Content" />
+		<result property="q_Subject" column="q_Subject" />
+		<result property="q_Email" column="q_Email" />
+		<result property="q_Kind" column="q_Kind" />
+		<result property="q_Date" column="q_Date"/>
+		<result property="q_Num" column="q_Num"/>
+		
+</resultMap>
+
+
+<insert id="questionInsert" parameterType="java.util.HashMap">
+		<selectKey resultType="string" keyProperty="q_Num"
+			order="BEFORE">
+			SELECT question_seq.nextval as question_seq FROM dual
+		</selectKey>
+		insert into question(q_Num, q_Subject, q_Content, q_Date, q_Email, q_Kind )
+		values(#{q_Num}, #{q_Subject}, #{q_Content}, (select to_char(sysdate, 'YYYY/MM/DD/ HH24:MI:SS') from dual)
+		, #{q_Email}, #{q_Kind} )
+	</insert>
+
+<select id="searchList" resultMap="questionResult"
+		parameterType="project.jeongha.vote.vo.Criteria"> 
+      <![CDATA[
+		select v_Num, c_Id, v_Name, v_Content, v_Date, mem_Id, mem_name, v_Start, v_End, vs_Num, vs_Name
+        from (
+            Select V.v_Num, V.c_Id, V.v_Name, V.v_Content, V.v_Date, V.mem_Id, V.v_Start, V.v_End, V.vs_Num, VS.vs_Name,
+            M.mem_name, row_number() over(order by V.v_Num desc) as rnum
+            From vote V, member M, vote_status VS
+            Where V.mem_Id = M.mem_Id
+            And V.vs_Num = VS.vs_Num
+            And V.c_Id=#{c_Id}
+            )
+        where rnum between #{rowStart} and #{rowEnd}
+        order by to_number(v_Num) desc
+      ]]>
+
+	</select>
+
+
+
+</mapper>

@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="issuemanager">
+	<resultMap id="managerResult01" type="java.util.Map">
+		<result property="i_Name" column="i_Name" />
+		<result property="i_Num" column="i_Num" />
+		<result property="mem_Id" column="mem_Id" />
+		<result property="c_Name" column="c_Name" />
+		<result property="i_Date" column="i_Date" />
+		<result property="c_Id" column="c_Id" />
+		<result property="i_Content" column="i_Content" jdbcType="CLOB" javaType="java.lang.String"/>
+		
+	</resultMap>
+
+	<select id="searchList" resultMap="managerResult01" parameterType="java.util.Map"> 
+      <![CDATA[
+         select i.i_Num, i.i_Name, i.mem_Id, c.c_Name,  SUBSTR(i.i_date, 1, 10) as i_Date, c.c_Id, i.i_Content
+         from   issue i, co_work c
+         where i.c_Id = c.c_Id
+      ]]>
+			<choose>
+			<!-- 4개 -->
+				<when test="mem_Id != '' and mem_Id != null and i_Name != '' and i_Name != null and c_Name != '' and c_Name != null and i_Content != '' and i_Content != null" >
+					<![CDATA[
+					and REPLACE(upper(REGEXP_REPLACE(i.mem_Id,'<[^>]*>|\&([^;])*;', '')),' ','') like CONCAT('%' || REPLACE(upper(#{mem_Id}),' ',''), '%')
+					and REPLACE(upper(REGEXP_REPLACE(i.i_Name,'<[^>]*>|\&([^;])*;', '')),' ','') like CONCAT('%' || REPLACE(upper(#{i_Name}),' ',''), '%')
+					and REPLACE(upper(REGEXP_REPLACE(c.c_Name,'<[^>]*>|\&([^;])*;', '')),' ','') like CONCAT('%' || REPLACE(upper(#{c_Name}),' ',''), '%')
+					and REPLACE(upper(REGEXP_REPLACE(i.i_Content,'<[^>]*>|\&([^;])*;', '')),' ','') like CONCAT('%' || REPLACE(upper(#{i_Content}),' ',''), '%')
+					]]>
+				</when>
+			<!-- 3개 -->
+				<when test="mem_Id != '' and mem_Id != null and i_Name != '' and i_Name != null and c_Name != '' and c_Name != null" >
+					<![CDATA[
+					and REPLACE(upper(REGEXP_REPLACE(i.mem_Id,'<[^>]*>|\&([^;])*;', '')),' ','') like CONCAT('%' || REPLACE(upper(#{mem_Id}),' ',''), '%')
+					and REPLACE(upper(REGEXP_REPLACE(i.i_Name,'<[^>]*>|\&([^;])*;', '')),' ','') like CONCAT('%' || REPLACE(upper(#{i_Name}),' ',''), '%')
+					and REPLACE(upper(REGEXP_REPLACE(c.c_Name,'<[^>]*>|\&([^;])*;', '')),' ','') like CONCAT('%' || REPLACE(upper(#{c_Name}),' ',''), '%')
+					]]>
+				</when>
+				<when test="mem_Id != '' and mem_Id != null and c_Name != '' and c_Name != null and i_Content != '' and i_Content != null" >
+					<![CDATA[
+					and REPLACE(upper(REGEXP_REPLACE(i.mem_Id,'<[^>]*>|\&([^;])*;', '')),' ','') like CONCAT('%' || REPLACE(upper(#{mem_Id}),' ',''), '%')
+					and REPLACE(upper(REGEXP_REPLACE(c.c_Name,'<[^>]*>|\&([^;])*;', '')),' ','') like CONCAT('%' || REPLACE(upper(#{c_Name}),' ',''), '%')
+					and REPLACE(upper(REGEXP_REPLACE(i.i_Content,'<[^>]*>|\&([^;])*;', '')),' ','') like CONCAT('%' || REPLACE(upper(#{i_Content}),' ',''), '%')
+					]]>
+				</when>
+				<when test="i_Name != '' and i_Name != null and c_Name != '' and c_Name != null and i_Content != '' and i_Content != null" >
+					<![CDATA[
+					and REPLACE(upper(REGEXP_REPLACE(i.i_Name,'<[^>]*>|\&([^;])*;', '')),' ','') like CONCAT('%' || REPLACE(upper(#{i_Name}),' ',''), '%')
+					and REPLACE(upper(REGEXP_REPLACE(c.c_Name,'<[^>]*>|\&([^;])*;', '')),' ','') like CONCAT('%' || REPLACE(upper(#{c_Name}),' ',''), '%')
+					and REPLACE(upper(REGEXP_REPLACE(i.i_Content,'<[^>]*>|\&([^;])*;', '')),' ','') like CONCAT('%' || REPLACE(upper(#{i_Content}),' ',''), '%')
+					]]>
+				</when>
+			<!-- 2개 -->
+				<when test="mem_Id != '' and mem_Id != null and i_Name != '' and i_Name != null" >
+					<![CDATA[
+					and REPLACE(upper(REGEXP_REPLACE(i.mem_Id,'<[^>]*>|\&([^;])*;', '')),' ','') like CONCAT('%' || REPLACE(upper(#{mem_Id}),' ',''), '%')
+					and REPLACE(upper(REGEXP_REPLACE(i.i_Name,'<[^>]*>|\&([^;])*;', '')),' ','') like CONCAT('%' || REPLACE(upper(#{i_Name}),' ',''), '%')
+					]]>
+				</when>
+				<when test="mem_Id != '' and mem_Id != null and c_Name != '' and c_Name != null" >
+					<![CDATA[
+					and REPLACE(upper(REGEXP_REPLACE(i.mem_Id,'<[^>]*>|\&([^;])*;', '')),' ','') like CONCAT('%' || REPLACE(upper(#{mem_Id}),' ',''), '%')
+					and REPLACE(upper(REGEXP_REPLACE(c.c_Name,'<[^>]*>|\&([^;])*;', '')),' ','') like CONCAT('%' || REPLACE(upper(#{c_Name}),' ',''), '%')
+					]]>
+				</when>
+				<when test="mem_Id != '' and mem_Id != null and i_Content != '' and i_Content != null" >
+					<![CDATA[
+					and REPLACE(upper(REGEXP_REPLACE(i.mem_Id,'<[^>]*>|\&([^;])*;', '')),' ','') like CONCAT('%' || REPLACE(upper(#{mem_Id}),' ',''), '%')
+					and REPLACE(upper(REGEXP_REPLACE(i.i_Content,'<[^>]*>|\&([^;])*;', '')),' ','') like CONCAT('%' || REPLACE(upper(#{i_Content}),' ',''), '%')
+					]]>
+				</when>
+				<when test="i_Name != '' and i_Name != null and i_Content != '' and i_Content != null" >
+					<![CDATA[
+					and REPLACE(upper(REGEXP_REPLACE(i.i_Name,'<[^>]*>|\&([^;])*;', '')),' ','') like CONCAT('%' || REPLACE(upper(#{i_Name}),' ',''), '%')
+					and REPLACE(upper(REGEXP_REPLACE(i.i_Content,'<[^>]*>|\&([^;])*;', '')),' ','') like CONCAT('%' || REPLACE(upper(#{i_Content}),' ',''), '%')
+					]]>
+				</when>
+				<when test="c_Name != '' and c_Name != null and i_Content != '' and i_Content != null" >
+					<![CDATA[
+					and REPLACE(upper(REGEXP_REPLACE(c.c_Name,'<[^>]*>|\&([^;])*;', '')),' ','') like CONCAT('%' || REPLACE(upper(#{c_Name}),' ',''), '%')
+					and REPLACE(upper(REGEXP_REPLACE(i.i_Content,'<[^>]*>|\&([^;])*;', '')),' ','') like CONCAT('%' || REPLACE(upper(#{i_Content}),' ',''), '%')
+					]]>
+				</when>
+			<!-- 1개 -->
+				<when test="mem_Id != '' and mem_Id != null" >
+					<![CDATA[
+					and REPLACE(upper(REGEXP_REPLACE(i.mem_Id,'<[^>]*>|\&([^;])*;', '')),' ','') like CONCAT('%' || REPLACE(upper(#{mem_Id}),' ',''), '%')
+					]]>
+				</when>
+				<when test="i_Name != '' and i_Name != null" >
+					<![CDATA[
+					and REPLACE(upper(REGEXP_REPLACE(i.i_Name,'<[^>]*>|\&([^;])*;', '')),' ','') like CONCAT('%' || REPLACE(upper(#{i_Name}),' ',''), '%')
+					]]>
+				</when>
+				<when test="c_Name != '' and c_Name != null" >
+					<![CDATA[
+					and REPLACE(upper(REGEXP_REPLACE(c.c_Name,'<[^>]*>|\&([^;])*;', '')),' ','') like CONCAT('%' || REPLACE(upper(#{c_Name}),' ',''), '%')
+					]]>
+				</when>
+				<when test="i_Content != '' and i_Content != null" >
+					<![CDATA[
+					and REPLACE(upper(REGEXP_REPLACE(i.i_Content,'<[^>]*>|\&([^;])*;', '')),' ','') like CONCAT('%' || REPLACE(upper(#{i_Content}),' ',''), '%')
+					]]>
+				</when>
+
+
+
+			</choose>
+		
+	</select>
+	
+	
+	<!-- 회원정보는 별명만 변경가능하게 했음 -->
+	<update id="updateData" parameterType="java.util.Map">
+		update member
+		set  mem_Name = #{mem_Name}
+		where mem_Id = #{mem_Id}
+	</update>	
+	
+	<!-- 이슈는 insert 안되는 게 맞는 것 같음 -->
+<!-- 	<insert id="insertData" parameterType="java.util.Map">
+	 시퀀스랑 비슷하게 적용 버그생기니 만들어놓은 시퀀스 사용하세요
+	    <selectKey  resultType="string" keyProperty="key_id" order="BEFORE">
+	       SELECT COUNT(id)+1 FROM t_member
+	    </selectKey> 
+		insert into (mem_Id, mem_Pwd, mem_Name) values(#{mem_Id}, #{mem_Pwd}, #{mem_Name})
+	</insert>	 -->
+	
+	
+	
+	<!-- 삭제 -->
+	<delete id="deleteData" parameterType="java.util.Map">
+		delete issue
+		where i_Num = #{i_Num}
+	</delete>	 
+</mapper>

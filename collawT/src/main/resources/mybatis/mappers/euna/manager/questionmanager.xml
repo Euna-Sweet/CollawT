@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="questionmanager">
+	<resultMap id="managerResult01" type="java.util.Map">
+		<result property="q_Email" column="q_Email" />
+		<result property="q_Subject" column="q_Subject" />
+		<result property="q_Kind" column="q_Kind" />
+		<result property="q_Content" column="q_Content"/>
+		<result property="q_Date" column="q_Date" />
+		<result property="q_Num" column="q_Num" />
+		<result property="q_Answer" column="q_Answer" />
+		
+	</resultMap>
+	
+	<resultMap id="managerResult02" type="java.util.Map">
+		<result property="q_Num" column="q_Num" />
+		<result property="as_Num" column="as_Num" />
+		<result property="as_Content" column="as_Content"/>
+		<result property="as_Date" column="as_Date" />		
+	</resultMap>
+
+	<select id="searchList" resultMap="managerResult01" parameterType="java.util.Map"> 
+      <![CDATA[
+         select *
+         from  question
+      ]]>
+      <where>
+			<choose>
+			<!-- 3개 -->
+				<when test="q_Email != '' and q_Email != null and q_Subject != '' and q_Subject != null and q_Content != '' and q_Content != null" >
+					<![CDATA[
+					and REPLACE(upper(REGEXP_REPLACE(q_Email,'<[^>]*>|\&([^;])*;', '')),' ','') like CONCAT('%' || REPLACE(upper(#{q_Email}),' ',''), '%')
+					and REPLACE(upper(REGEXP_REPLACE(q_Subject,'<[^>]*>|\&([^;])*;', '')),' ','') like CONCAT('%' || REPLACE(upper(#{q_Subject}),' ',''), '%')
+					and REPLACE(upper(REGEXP_REPLACE(q_Content,'<[^>]*>|\&([^;])*;', '')),' ','') like CONCAT('%' || REPLACE(upper(#{q_Content}),' ',''), '%')
+					]]>
+				</when>
+			<!-- 2개 -->
+				<when test="q_Email != '' and q_Email != null and q_Subject != '' and q_Subject != null" >
+					<![CDATA[
+					and REPLACE(upper(REGEXP_REPLACE(q_Email,'<[^>]*>|\&([^;])*;', '')),' ','') like CONCAT('%' || REPLACE(upper(#{q_Email}),' ',''), '%')
+					and REPLACE(upper(REGEXP_REPLACE(q_Subject,'<[^>]*>|\&([^;])*;', '')),' ','') like CONCAT('%' || REPLACE(upper(#{q_Subject}),' ',''), '%')
+					]]>
+				</when>
+				<when test="q_Email != '' and q_Email != null and q_Content != '' and q_Content != null" >
+					<![CDATA[
+					and REPLACE(upper(REGEXP_REPLACE(q_Email,'<[^>]*>|\&([^;])*;', '')),' ','') like CONCAT('%' || REPLACE(upper(#{q_Email}),' ',''), '%')
+					and REPLACE(upper(REGEXP_REPLACE(q_Content,'<[^>]*>|\&([^;])*;', '')),' ','') like CONCAT('%' || REPLACE(upper(#{q_Content}),' ',''), '%')
+					]]>
+				</when>
+				<when test="q_Subject != '' and q_Subject != null and q_Content != '' and q_Content != null" >
+					<![CDATA[
+					and REPLACE(upper(REGEXP_REPLACE(q_Subject,'<[^>]*>|\&([^;])*;', '')),' ','') like CONCAT('%' || REPLACE(upper(#{q_Subject}),' ',''), '%')
+					and REPLACE(upper(REGEXP_REPLACE(q_Content,'<[^>]*>|\&([^;])*;', '')),' ','') like CONCAT('%' || REPLACE(upper(#{q_Content}),' ',''), '%')
+					]]>
+				</when>
+			<!-- 1개 -->
+				<when test="q_Email != '' and q_Email != null" >
+					<![CDATA[
+					and REPLACE(upper(REGEXP_REPLACE(q_Email,'<[^>]*>|\&([^;])*;', '')),' ','') like CONCAT('%' || REPLACE(upper(#{q_Email}),' ',''), '%')
+					]]>
+				</when>
+				<when test="q_Subject != '' and q_Subject != null" >
+					<![CDATA[
+					and REPLACE(upper(REGEXP_REPLACE(q_Subject,'<[^>]*>|\&([^;])*;', '')),' ','') like CONCAT('%' || REPLACE(upper(#{q_Subject}),' ',''), '%')
+					]]>
+				</when>
+				<when test="q_Content != '' and q_Content != null" >
+					<![CDATA[
+					and REPLACE(upper(REGEXP_REPLACE(q_Content,'<[^>]*>|\&([^;])*;', '')),' ','') like CONCAT('%' || REPLACE(upper(#{q_Content}),' ',''), '%')
+					]]>
+				</when>
+			</choose>
+		</where>
+			<![CDATA[
+				order by q_Date desc
+			]]>
+	</select>
+	
+	
+	<!-- 회원정보는 별명만 변경가능하게 했음 -->
+<!-- 	<update id="updateData" parameterType="java.util.Map">
+		update member
+		set  mem_Name = #{mem_Name}
+		where q_Email = #{q_Email}
+	</update>	 -->
+	
+	<!-- 이슈는 insert 안되는 게 맞는 것 같음 -->
+<!-- 	<insert id="insertData" parameterType="java.util.Map">
+	 시퀀스랑 비슷하게 적용 버그생기니 만들어놓은 시퀀스 사용하세요
+	    <selectKey  resultType="string" keyProperty="key_id" order="BEFORE">
+	       SELECT COUNT(id)+1 FROM t_member
+	    </selectKey> 
+		insert into (q_Email, mem_Pwd, mem_Name) values(#{q_Email}, #{mem_Pwd}, #{mem_Name})
+	</insert>	 -->
+	
+	
+	
+	<!-- 삭제 -->
+	<delete id="deleteData" parameterType="java.util.Map">
+		delete question
+		where q_Num = #{q_Num}
+	</delete>	 
+	
+	
+	<!-- 문의글 조회 -->
+		<select id="questionRead" resultMap="managerResult01" > 
+      <![CDATA[
+
+         select *
+         from question
+		where q_Num=#{q_Num}
+      ]]>
+
+		
+	</select>
+	
+	<!-- 관리자 메인 -->
+		<select id="main" resultMap="managerResult01" > 
+      <![CDATA[
+
+         select q_Email, q_Subject, q_Kind, q_Content, q_Date, Q_Num, row_number() over(order by q_Date desc) as rnum
+         from question
+        where q_answer = '확인중' or q_answer = '미확인'
+        order by q_Date desc
+      ]]>
+
+		
+	</select>
+	
+		<!-- 답변 입력 -->
+	<insert id="answerInsert">
+		insert into answer(q_Num, as_Num, as_Content, as_Date)
+		values(#{q_Num}, answer_seq.nextval, #{as_Content} ,  
+		(select to_char(sysdate, 'YYYY/MM/DD/ HH24:MI:SS') from dual))
+	</insert>
+	
+		<!-- 상태 수정 -->
+	<update id="questionStatusUpdate"
+		parameterType="java.util.HashMap">
+		UPDATE question
+		SET q_Answer = #{q_Answer}
+		WHERE q_Num=#{q_Num}
+	</update>
+	
+		<!-- 이전 답변내역 조회 -->
+		<select id="beforeAnswerList" resultMap="managerResult02" > 
+      <![CDATA[
+         select *
+         from answer
+		where q_Num=#{q_Num}
+		order by as_Date desc
+      ]]>
+      </select>
+</mapper>

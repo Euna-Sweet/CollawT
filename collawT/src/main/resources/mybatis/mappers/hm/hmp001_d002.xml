@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="hm.hmp001_d002">
+	<resultMap id="hmp001_d002Result01" type="hmp001_d002VO">
+		<result property="id" column="id" />
+		<result property="before_id" column="before_id" />
+		<result property="after_id" column="after_id" />
+		<result property="pwd" column="pwd" />
+		<result property="name" column="name" />
+		<result property="email" column="email" />
+		<result property="joinDate" column="joinDate" />
+	</resultMap>
+
+	<select id="searchMember" resultMap="hmp001_d002Result01" parameterType="java.util.Map">
+      <![CDATA[
+         SELECT *
+         FROM (
+           SELECT a.*
+                 , LAG(id, 1, 0) OVER (ORDER BY id desc) as before_id
+                 , LEAD(id, 1, 0) OVER (ORDER BY id desc) as after_id
+           FROM t_member a 
+         )
+      ]]>
+		<where>
+			<if test=" p_id != ''  and  p_id != null">
+				id = #{p_id}
+			</if>
+		</where>
+		ORDER BY id desc		
+	</select>
+
+	<update id="updateMember" parameterType="java.util.Map">
+	 merge into t_member m
+	 using ( select #{id} as id, #{pwd} as pwd, #{name} as name
+	         from dual ) e
+	 on (m.id = e.id)        	
+	 when matched then 
+	   update set pwd = e.pwd, name = e.name
+	 when not matched then
+	   insert (id, pwd, name)
+	   values (e.id, e.pwd, e.name)	
+	</update>
+
+</mapper>

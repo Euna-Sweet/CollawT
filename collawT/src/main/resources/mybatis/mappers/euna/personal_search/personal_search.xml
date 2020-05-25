@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="personal_search">
+
+	
+	<resultMap id="personal_searchResult01" type="java.util.HashMap">
+		<!-- property는 화면단에서 쓸 이름, column은 데이터컬럼명이랑 동일 -->
+		<result property="i_Num" column="i_Num" />
+		<result property="r_Num" column="r_Num" />
+		<result property="c_Id" column="c_Id" />
+		<result property="c_Name" column="c_Name" />
+		<result property="i_Name" column="i_Name" />
+		<result property="i_Content" column="i_Content" jdbcType="CLOB" javaType="java.lang.String"/>
+		<result property="r_Content" column="r_Content" jdbcType="CLOB" javaType="java.lang.String"/>
+		<result property="i_Date" column="i_Date" />
+		<result property="r_Date" column="r_Date" />
+		<result property="i_Start" column="i_Start" />
+		<result property="i_End" column="i_End" />
+		<result property="mem_Id" column="mem_Id" />
+		<result property="mem_Name" column="mem_Name" />
+		<result property="rnum" column="rnum" />
+		<result property="boardtype" column="boardtype" />
+		<result property="ig_Num" column="ig_Num" />
+		<result property="vs_Num" column="vs_Num" />
+		<result property="ig_Name" column="ig_Name" />
+		<result property="ig_Color" column="ig_Color" />
+	</resultMap>
+	<resultMap id="fileResult01" type="java.util.HashMap">
+		<!-- property는 화면단에서 쓸 이름, column은 데이터컬럼명이랑 동일 -->
+		<result property="a_File" column="a_File" javaType="[B" jdbcType="BLOB"/>
+		<result property="a_RealName" column="a_RealName" />
+		<result property="a_NameEx" column="a_NameEx" />
+		<result property="a_Num" column="a_Num" />
+		<result property="a_Del" column="a_Del" />
+		<result property="a_Size" column="a_Size" />
+		<result property="i_Num" column="i_Num"/>
+		<result property="c_Id" column="c_Id" />
+		<result property="i_Name" column="i_Name" />
+		<result property="i_Date" column="i_Date" />
+		<result property="mem_Id" column="mem_Id" />
+		<result property="c_Name" column="c_Name" />
+		<result property="mem_Name" column="mem_Name" />
+		<result property="ig_Name" column="ig_Name" />
+		<result property="ig_Color" column="ig_Color" />
+	</resultMap>
+
+	
+	<resultMap id="personal_searchResult03" type="java.util.HashMap">
+		<!-- property는 화면단에서 쓸 이름, column은 데이터컬럼명이랑 동일 -->
+		<result property="i_Num" column="i_Num" />
+		<result property="i_Name" column="i_Name" />
+		<result property="i_Date" column="i_Date" />
+		<result property="i_Start" column="i_Start" />
+		<result property="i_End" column="i_End" />
+		<result property="mem_Id" column="mem_Id" />
+		<result property="rnum" column="rnum" />
+		<result property="ig_Num" column="ig_Num" />
+		<result property="ig_Name" column="ig_Name" />
+		<result property="ig_Color" column="ig_Color" />
+		<result property="c_Name" column="c_Name" />
+		<result property="c_Id" column="c_Id" />
+		
+	</resultMap>
+
+
+	<!-- 내가 쓴 글 확인-->
+	<select id="myBoardlist" resultMap="personal_searchResult01" parameterType="project.euna.personal_search.vo.Criteria"> 
+	<![CDATA[
+        select c_Id, c_Name, i_Name, i_Date, mem_Id, rnum, boardtype, i_Num, rnum, ig_Num, ig_Name, ig_Color
+		from(
+		    select c_Id, c_Name, i_Name, i_Date, mem_Id, row_number() over(order by i_date desc) as rnum, boardtype, i_Num, ig_Num, ig_Name, ig_Color
+		    from v_allboard
+		    where mem_Id=#{mem_Id}
+		    )
+		where rnum between #{rowStart} and #{rowEnd}
+	
+	]]>
+
+	</select>
+	
+	
+	
+	<!-- 내가 쓴 글 게시물 총 갯수 -->
+	<select id="listCount" resultType="int" parameterType="project.euna.personal_search.vo.Criteria"> 
+      <![CDATA[
+		select count(*)
+		from v_allboard
+        where mem_Id=#{mem_Id}
+      ]]>
+
+	</select>
+	
+	
+	
+	
+		<!-- 내가 쓴 댓글 확인-->
+	<select id="myreplylist" resultMap="personal_searchResult01" parameterType="project.euna.personal_search.vo.Criteria"> 
+	<![CDATA[
+        select c_Id, c_Name, i_Name, r_Date, mem_Id, rnum, boardtype, i_Num, rnum, ig_Num, ig_Name, ig_Color, r_Content, r_Num
+		from(
+		    select c_Id, c_Name, i_Name, r_Date, mem_Id, row_number() over(order by r_date desc) as rnum, boardtype, i_Num, ig_Num, ig_Name, ig_Color, r_Content, r_Num
+		    from v_allreply
+		    where mem_Id=#{mem_Id}
+		    )
+		where rnum between #{rowStart} and #{rowEnd}
+	
+	]]>
+
+	</select>
+	
+	
+	
+	<!-- 내가 쓴 댓글 게시물 총 갯수 -->
+	<select id="replylistCount" resultType="int" parameterType="project.euna.personal_search.vo.Criteria"> 
+      <![CDATA[
+		select count(*)
+		from v_allreply
+        where mem_Id=#{mem_Id}
+      ]]>
+
+	</select>
+	
+
+	
+	
+	
+	<!-- 파일함 전체 뷰 -->
+		<select id="myFile" resultMap="fileResult01" parameterType="String"> 
+      <![CDATA[
+        (select a.a_File as a_File, a.a_Realname as a_Realname, a.a_NameEx as a_NameEx, a.a_Num as a_Num, a.a_Del as a_Del, a.a_Size as a_Size,
+                i.i_Num as i_Num, i.c_Id as c_Id, i.I_Name as I_Name, i.I_Date as I_Date, i.mem_Id as mem_Id,
+                c.c_Name as c_Name,
+                m.mem_name as mem_Name,
+                ig.ig_Color as ig_Color, ig.ig_Name as ig_Name
+         from appendix a, issue i, co_work c, member m, issue_group ig
+         where i.i_Num = a.i_Num
+         and c.c_id=i.c_id
+         and m.mem_id=i.mem_id
+         and i.ig_Num = ig.ig_Num
+         and a.a_Del = 'N'
+         and c.c_Id in
+            (
+            select c_id from co_member where mem_id=#{mem_Id}
+            )
+         )
+        union all
+        (select pa.p_a_File as a_File, pa.p_a_Realname as a_Realname, pa.p_a_NameEx as a_NameEx, pa.p_a_Num as a_Num, pa.p_a_Del as a_Del, pa.p_a_Size as a_Size,
+                p.p_Num as i_Num, p.mem_Id as c_Id, p.p_i_Name as I_Name, p.p_i_Date as I_Date, p.mem_Id as mem_Id,
+                null as c_name,
+                m.mem_name as mem_Name,
+                null as ig_Color, null as ig_Name
+            from personal_appendix pa, personal p, member m
+            where pa.p_Num = p.p_Num
+            and m.mem_id=p.mem_id
+            and pa.p_a_Del = 'N'
+            and m.mem_id = #{mem_Id}
+        )
+		
+      ]]>
+
+	</select>
+	
+	
+		<!-- 내가 담당한 이슈 리스트 -->
+	<select id="myissueList"   resultMap="personal_searchResult03" parameterType="project.euna.personal_search.vo.Criteria"> 
+      <![CDATA[
+	select *
+	from(
+	    select i.i_Num, i.i_Name, i.i_Date, i.i_Start, i.i_End,
+	            c.mem_Id,
+	            ig.ig_Name, ig.ig_Color, ig.ig_Num,
+	            co.c_Name, co.c_Id,
+	            row_number() over(order by i_date desc) as rnum
+	    from charger c, issue i, issue_group ig, co_work co
+	    where i.i_Num = c.i_Num
+	    and ig.ig_Num = i.ig_Num
+	    and c.mem_Id=#{mem_Id}
+	    and co.c_Id = c.c_Id
+	    order by i_Date desc
+	    )
+		where rnum between #{rowStart} and #{rowEnd}
+      ]]>
+	</select> 
+	
+	
+	
+	
+	<!-- 내 담당 이슈리스트 게시물 총 갯수 -->
+	<select id="myissueListCount" resultType="int" parameterType="project.euna.personal_search.vo.Criteria"> 
+      <![CDATA[
+	    select count(*)
+	    from charger c, issue i, issue_group ig
+	    where i.i_Num = c.i_Num
+	    and ig.ig_Num = i.ig_Num
+	    and c.mem_Id=#{mem_Id}
+	    order by i_Date desc
+      ]]>
+
+	</select>
+
+
+
+
+</mapper>

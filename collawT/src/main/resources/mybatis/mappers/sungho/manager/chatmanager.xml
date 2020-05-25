@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="chatmanager">
+	<resultMap id="chatmanagerResult01" type="java.util.Map">
+		<result property="chat_Id" column="chat_Id" />
+		<result property="mem_Id" column="mem_Id" />
+		<result property="target_Id" column="target_Id" />
+		<result property="message" column="message" />
+		<result property="chat_Date" column="chat_Date" />
+		<result property="chat_Stat" column="chat_Stat" />
+	</resultMap>
+
+	<select id="searchList" resultMap="chatmanagerResult01" parameterType="java.util.Map"> 
+      <![CDATA[
+         select chat_Id, mem_Id, target_Id,  message , chat_Date, chat_Stat
+         from   chatmessage
+      ]]>
+		<where>
+			<choose>
+				<when test="mem_Id != '' and mem_Id != null and target_Id != ''  and  target_Id != null 
+					and message != ''  and  message != null " >
+					mem_Id like '%'||#{mem_Id}||'%' and target_Id like '%'||#{target_Id}||'%' and message like '%'||#{message}||'%'
+				</when>
+				<when test="mem_Id != '' and mem_Id != null and target_Id != ''  and  target_Id != null" >
+					mem_Id like '%'||#{mem_Id}||'%' and target_Id like '%'||#{target_Id}||'%'
+				</when>
+				<when test="mem_Id != '' and mem_Id != null and message != ''  and  message != null" >
+					mem_Id like '%'||#{mem_Id}||'%' and message like '%'||#{message}||'%'
+				</when>
+				<when test="target_Id != '' and target_Id != null and message != ''  and  message != null" >
+					target_Id like '%'||#{target_Id}||'%' and message like '%'||#{message}||'%'
+				</when>
+				<when test="mem_Id != '' and mem_Id != null">
+					mem_Id like '%'||#{mem_Id}||'%'
+				</when>
+				<when test="target_Id != ''  and  target_Id != null">
+					target_Id like '%'||#{target_Id}||'%'
+				</when>
+				<when test="message != ''  and  message != null">
+					message like '%'||#{message}||'%'
+				</when>
+			</choose>
+		</where>
+		
+	</select>
+	
+	
+	<!-- 회원정보는 별명만 변경가능하게 했음 -->
+	<update id="updateData" parameterType="java.util.Map">
+		
+	</update>	
+	
+	<insert id="insertData" parameterType="java.util.Map">
+	 <!-- 시퀀스랑 비슷하게 적용 버그생기니 만들어놓은 시퀀스 사용하세요-->
+	   <!--  <selectKey  resultType="string" keyProperty="key_id" order="BEFORE">
+	       SELECT COUNT(id)+1 FROM t_member
+	    </selectKey>  -->
+		insert into chatmessage(chat_Id, mem_Id, target_Id, message, chat_Date,chat_Stat) 
+		values(CHATMESSAGE_CHAT_ID.NEXTVAL,#{mem_Id}, #{target_Id}, #{message}, (select to_char(sysdate, 'YYYY/MM/DD/ HH24:MI:SS') from dual), '1')
+	</insert>	
+	
+	<delete id="deleteData" parameterType="java.util.Map">
+		delete chatmessage
+		where chat_Date = #{chat_Date}
+	</delete>	 
+</mapper>

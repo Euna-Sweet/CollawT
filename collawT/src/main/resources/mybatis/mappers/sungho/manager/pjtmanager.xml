@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="pjtmanager">
+	<resultMap id="pjtmanagerResult01" type="java.util.Map">
+		<result property="c_Id" column="c_Id" />
+		<result property="c_Name" column="c_Name" />
+		<result property="c_Comment" column="c_Comment" jdbcType="CLOB"
+			javaType="java.lang.String" />
+		<result property="mem_Id" column="mem_Id" />
+		<result property="c_Category" column="c_Category" />
+	</resultMap>
+
+	<select id="searchList" resultMap="pjtmanagerResult01" parameterType="java.util.Map"> 
+      <![CDATA[
+         select c_Id, c_Name, c_Comment,  mem_Id , c_Category
+         from   co_Work
+      ]]>
+		<where>
+			<choose>
+				<when test="c_Id != '' and c_Id != null and c_Name != ''  and  c_Name != null 
+					and mem_Id != ''  and  mem_Id != null " >
+					c_Id = #{c_Id} and c_Name like '%'||#{c_Name}||'%' and mem_Id like '%'||#{mem_Id}||'%'
+				</when>
+				<when test="c_Id != '' and c_Id != null and c_Name != ''  and  c_Name != null" >
+					c_Id = #{c_Id} and c_Name like '%'||#{c_Name}||'%'
+				</when>
+				<when test="c_Id != '' and c_Id != null and mem_Id != ''  and  mem_Id != null" >
+					c_Id = #{c_Id} and mem_Id like '%'||${mem_Id}||'%'
+				</when>
+				<when test="c_Name != '' and c_Name != null and mem_Id != ''  and  mem_Id != null" >
+					c_Name like '%'||#{c_Name}||'%' and mem_Id like '%'||#{mem_Id}||'%'
+				</when>
+				<when test="c_Id != '' and c_Id != null">
+					c_Id = #{c_Id}
+				</when>
+				<when test="c_Name != ''  and  c_Name != null">
+					c_Name like '%'||#{c_Name}||'%'
+				</when>
+				<when test="mem_Id != ''  and  mem_Id != null">
+					mem_Id like '%'||#{mem_Id}||'%'
+				</when>
+			</choose>
+		</where>
+		
+	</select>
+	
+	
+	<!-- 회원정보는 별명만 변경가능하게 했음 -->
+	<update id="updateData" parameterType="java.util.Map">
+		update co_Work
+		set  c_Name = #{c_Name}
+		where c_Id = #{c_Id}
+	</update>	
+	
+	<insert id="insertData" parameterType="java.util.Map">
+	 <!-- 시퀀스랑 비슷하게 적용 버그생기니 만들어놓은 시퀀스 사용하세요-->
+	   <!--  <selectKey  resultType="string" keyProperty="key_id" order="BEFORE">
+	       SELECT COUNT(id)+1 FROM t_member
+	    </selectKey>  -->
+		insert into co_Work(c_Id, c_Name, mem_Id) values(#{c_Id}, #{c_Name}, #{mem_Id})
+	</insert>	
+	
+	<delete id="deleteData" parameterType="java.util.Map">
+		delete co_Work
+		where c_Id = #{c_Id}
+	</delete>	 
+</mapper>

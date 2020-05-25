@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="voteManager">
+	<resultMap id="voteManagerResult01" type="java.util.Map">
+		<result property="mem_Id" column="mem_Id" />
+		<result property="mem_Name" column="mem_Name" />
+		<result property="v_Num" column="v_Num" />
+		<result property="v_Name" column="v_Name" />
+		<result property="v_Subject" column="v_Subject" />		
+		<result property="v_Content" column="v_Content" jdbcType="CLOB" javaType="java.lang.String" />
+		<result property="v_Show" column="v_Show" />
+		<result property="v_Date" column="v_Date" />		
+		<result property="v_Start" column="v_Start" />
+		<result property="c_Id" column="c_Id" />
+		<result property="v_End" column="v_End" />
+	</resultMap>
+
+	<select id="searchList" resultMap="voteManagerResult01" parameterType="java.util.Map"> 
+      <![CDATA[
+         select c_Id, mem_Id, mem_Name,  SUBSTR(v_date, 1, 10) as v_Date , v_Num, v_Name, v_Subject, v_Content, REPLACE(v_Show,'1','공개')as v_Show, v_Start, v_End
+         from   vote
+      ]]>
+		<where>
+			<choose>
+				<when test="mem_Id != '' and mem_Id != null and mem_Name != ''  and  mem_Name != null"  >
+					<![CDATA[
+					REPLACE(upper(REGEXP_REPLACE(mem_Id,'<[^>]*>|\&([^;])*;', '')),' ','') like CONCAT('%' || REPLACE(upper(#{mem_Id}),' ',''), '%') 
+					and 
+					REPLACE(upper(REGEXP_REPLACE(mem_Name,'<[^>]*>|\&([^;])*;', '')),' ','') like CONCAT('%' || REPLACE(upper(#{mem_Name}),' ',''), '%')
+					]]>
+				</when>
+				<when test="mem_Id != '' and mem_Id != null" >
+					<![CDATA[
+               		REPLACE(upper(REGEXP_REPLACE(mem_Id,'<[^>]*>|\&([^;])*;', '')),' ','') like CONCAT('%' || REPLACE(upper(#{mem_Id}),' ',''), '%')
+               		]]>
+				</when>
+				<when test="mem_Name != '' and mem_Name != null " >
+					<![CDATA[
+					REPLACE(upper(REGEXP_REPLACE(mem_Name,'<[^>]*>|\&([^;])*;', '')),' ','') like CONCAT('%' || REPLACE(upper(#{mem_Name}),' ',''), '%')
+					]]>
+				</when>
+				<when test="v_Content != '' and v_Content != null " >
+					<![CDATA[
+					REPLACE(upper(REGEXP_REPLACE(v_Content,'<[^>]*>|\&([^;])*;', '')),' ','') like CONCAT('%' || REPLACE(upper(#{v_Content}),' ',''), '%')
+					]]>
+				</when>
+				
+			</choose>
+		</where>
+		
+	</select>
+	
+	
+	<!-- 회원정보는 별명만 변경가능하게 했음 -->
+	<update id="updateData" parameterType="java.util.Map">
+		UPDATE vote
+		SET v_Name = #{v_Name},
+			v_Subject = #{v_Subject},
+			v_Date = #{v_Date},
+			v_Start = #{v_Start},
+			v_End =	#{v_End}
+		WHERE v_Num=#{v_Num}
+	</update>	
+	
+	<insert id="insertData" parameterType="java.util.Map">
+	 <!-- 시퀀스랑 비슷하게 적용 버그생기니 만들어놓은 시퀀스 사용하세요-->
+	   <!--  <selectKey  resultType="string" keyProperty="key_id" order="BEFORE">
+	       SELECT COUNT(id)+1 FROM t_member
+	    </selectKey>  -->
+		insert into vote(mem_Id, mem_Name) values(#{mem_Id}, #{mem_Name})
+	</insert>	
+	
+	<delete id="deleteData" parameterType="java.util.Map">
+		delete vote
+		where v_Num = #{v_Num}
+	</delete>	 
+</mapper>

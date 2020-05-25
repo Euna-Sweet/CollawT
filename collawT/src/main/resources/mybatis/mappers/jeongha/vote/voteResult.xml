@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="voteResult">
+	<resultMap id="voteResult01" type="VoteVO">
+		<!-- property는 화면단에서 쓸 이름, column은 데이터컬럼명이랑 동일 -->
+		<result property="c_Id" column="c_Id" />
+		<result property="v_Num" column="v_Num" />
+		<result property="v_Content" column="v_Content" jdbcType="CLOB"
+			javaType="java.lang.String" />
+		<result property="v_Start" column="v_Start" />
+		<result property="v_End" column="v_End" />
+		<result property="mem_Id" column="mem_Id" />
+		<result property="v_Date" column="v_Date" />
+		<result property="v_Name" column="v_Name" />
+		<result property="vs_Num" column="vs_Num" />
+		<result property="v_Subject" column="v_Subject" />
+		<result property="v_Count" column="v_Count" />
+		<result property="vd_Content" column="vd_Content" jdbcType="CLOB"
+			javaType="java.lang.String" />
+		<result property="vd_Num" column="vd_Num" />
+	</resultMap>
+
+	<resultMap id="voteResult02" type="java.util.HashMap">
+		<!-- property는 화면단에서 쓸 이름, column은 데이터컬럼명이랑 동일 -->
+		<result property="c_Id" column="c_Id" />
+		<result property="v_Num" column="v_Num" />
+		<result property="v_Content" column="v_Content" jdbcType="CLOB"
+			javaType="java.lang.String" />
+		<result property="v_Start" column="v_Start" />
+		<result property="v_End" column="v_End" />
+		<result property="mem_Id" column="mem_Id" />
+		<result property="v_Date" column="v_Date" />
+		<result property="v_Name" column="v_Name" />
+		<result property="v_Show" column="v_Show" />
+		<result property="vs_Num" column="vs_Num" />
+		<result property="vs_Name" column="vs_Name" />
+		<result property="mem_Name" column="mem_Name" />
+		<result property="mem_File" column="mem_File" javaType="[B"	jdbcType="BLOB" />
+		<result property="v_Subject" column="v_Subject" />
+		<result property="v_Count" column="v_Count" javaType="java.lang.Integer" jdbcType="VARCHAR"/>
+		<result property="co_Mem_Total" column="co_Mem_Total" />
+		<result property="vd_Content" column="vd_Content" jdbcType="CLOB"
+			javaType="java.lang.String" />
+		<result property="vd_Num" column="vd_Num" />
+		<result property="vs_Color" column="vs_Color" />
+	</resultMap>
+
+
+
+	<!-- 글 목록 페이징 -->
+	<select id="searchList" resultMap="voteResult02"
+		parameterType="project.jeongha.vote.vo.Criteria"> 
+      <![CDATA[
+		select v_Num, c_Id, v_Name, v_Content, v_Date, mem_Id, mem_name, v_Start, v_End, vs_Num, vs_Name, vs_Color
+        from (
+            Select V.v_Num, V.c_Id, V.v_Name, V.v_Content, V.v_Date, V.mem_Id, V.v_Start, V.v_End, V.vs_Num, VS.vs_Name, VS.vs_Color,
+            M.mem_name, row_number() over(order by V.v_Num desc) as rnum
+            From vote V, member M, vote_status VS
+            Where V.mem_Id = M.mem_Id
+            And V.vs_Num = VS.vs_Num
+            And V.c_Id=#{c_Id}
+            )
+        where rnum between #{rowStart} and #{rowEnd}
+        order by to_number(v_Num) desc
+      ]]>
+
+	</select>
+
+	<!-- 게시물 총 갯수 -->
+	<select id="listCount" resultType="int"
+		parameterType="project.jeongha.vote.vo.Criteria"> 
+      <![CDATA[
+        select count(v_Num)
+        from vote
+        where v_Num>0
+        and c_Id=#{c_Id}
+      ]]>
+
+	</select>
+
+
+
+
+	<!-- 글 입력 -->
+	<insert id="voteInsert" parameterType="java.util.HashMap">
+		<selectKey resultType="string" keyProperty="v_Num"
+			order="BEFORE">
+			SELECT vote_seq.nextval as vote_seq FROM dual
+		</selectKey>
+		insert into vote(v_Num, c_Id, v_Name, v_Content, v_Date, mem_Id,
+		v_Start, v_End, vs_Num, v_Subject, mem_Name,v_Show )
+		values(#{v_Num}, #{c_Id},
+		#{v_Name}, #{v_Content} ,
+		(select to_char(sysdate, 'YYYY/MM/DD/ HH24:MI:SS') from dual)
+		, #{mem_Id}, #{v_Start}, #{v_End},
+		#{vs_Num},#{v_Subject},  #{mem_Name}, #{v_Show} )
+	</insert>
+
+	<!-- 투표보기란 입력 -->
+	<insert id="votedInsert" parameterType="java.util.Map">
+		insert into voted(v_num, vd_num, vd_content, c_id)
+		values( #{v_Num}, #{vd_Num}, #{vd_Content}, #{c_Id})
+	</insert>
+	
+	<!-- 투표자 입력 -->
+	<insert id="voterInsert" parameterType="java.util.Map">
+	   <![CDATA[
+		insert into voter(v_num, vd_num, mem_Id, c_id)
+		values( #{v_Num}, #{vd_Num}, #{mem_Id},	#{c_Id} )
+		]]>
+	</insert>
+	
+	<!-- 투표 카운팅 -->
+	<select id="voteCount" parameterType="java.util.Map" resultMap="voteResult02"> 
+      <![CDATA[
+		select v.v_Num, v.c_Id, v.vd_Num, v.mem_Id, m.mem_Name
+		from voter v ,member m
+		where v.mem_Id = m.mem_Id
+		and v.v_Num = #{v_Num}
+		order by v.vd_num
+      ]]>
+	</select>
+
+	<!-- 투표 조회 -->
+	<select id="voteRead" parameterType="String" resultMap="voteResult02"> 
+      <![CDATA[
+		select m.mem_file, V.v_Num, V.c_Id, V.v_Name, V.v_Content, V.v_Date, V.mem_Id, V.v_Start, V.v_End, V.v_Subject,vs.vs_name, v.vs_num, v.v_count,v.v_show ,v.mem_Name,vs.vs_Color,(
+                                   	select count(*) as coworker
+                                    from co_member
+									where c_id=#{c_Id}) as co_Mem_Total
+		from vote V , vote_status vs, member m
+		where v.vs_num = vs.vs_num 
+		and m.mem_id=v.mem_id
+        and v.v_Num=#{v_Num}
+      ]]>
+	</select>
+	
+	<!-- 토탈 -->
+	<select id="voteTotal" parameterType="java.util.Map" resultMap="voteResult02"> 
+      <![CDATA[
+        SELECT count(*) AS v_Count, vr.vd_Num
+		FROM voter vr, vote v
+		WHERE vr.v_num=v.V_NUM
+		AND v.V_NUM = #{v_Num}
+		GROUP BY vr.vd_num
+      ]]>
+	</select>
+
+	<!-- 투표 조회 -->
+	<select id="votedRead" parameterType="String" resultMap="voteResult02"> 
+      <![CDATA[
+        select Vd.v_Num, Vd.c_Id, Vd.vd_Content, Vd.vd_num
+		from voted Vd
+		where Vd.v_Num=#{v_Num}
+      ]]>
+	</select>
+
+	<!-- where and V.v_Num=#{v_Num} -->
+	<!-- 게시물 삭제 -->
+	<delete id="voteDelete" parameterType="String">
+		DELETE
+		FROM vote
+		WHERE
+		v_Num=#{v_Num}
+	</delete>
+	
+	<!-- 게시글 삭제 시 투표 보기 삭제 -->
+	<delete id="votedDelete" parameterType="String">
+		DELETE
+		FROM voted
+		WHERE
+		v_Num=#{v_Num}
+	</delete>
+	
+	<!-- 게시글 삭제 시 댓글 삭제 -->
+	<delete id="votereplyDelete" parameterType="String">
+		DELETE
+		FROM vote_reply
+		WHERE
+		v_Num=#{v_Num}
+	</delete>
+
+	<!-- vote 수정 -->
+	<update id="voteUpdate" parameterType="java.util.HashMap">
+		UPDATE vote
+		SET v_Name = #{v_Name},
+			v_Content = #{v_Content},
+			v_Subject = #{v_Subject},
+			v_Date = (select to_char(sysdate,'YYYY/MM/DD/ HH24:MI:SS') from dual),
+			v_Start = #{v_Start},
+			v_End =	#{v_End}
+		WHERE v_Num=#{v_Num}
+	</update>
+	
+	
+	<!-- voted 수정 -->
+	<update id="votedUpdate" parameterType="java.util.HashMap">
+		UPDATE voted
+		SET vd_Content = #{vd_Content}
+		WHERE v_Num = #{v_Num}
+		AND vd_Num = #{vd_Num}
+	</update>
+
+
+	<!-- 협업공간 조회 -->
+	<select id="igRead" resultType="java.util.HashMap"> 
+      <![CDATA[
+			select *
+			from issue_group
+			order by ig_Num asc
+      ]]>
+	</select>
+
+
+	<!-- 협업공간 내 멤버 조회 -->
+	<select id="comemRead" resultType="java.util.HashMap"> 
+      <![CDATA[
+			select m.mem_name, m.mem_id
+			from member m, co_member co
+			where m.mem_id = co.mem_id
+			and c_id = #{c_id}
+      ]]>
+	</select>
+	
+	<!-- 협업공간 내 멤버 조회 -->
+	<select id="countCowork" resultType="java.util.HashMap" resultMap="voteResult02"> 
+      <![CDATA[
+		select count(*) as coworker
+		from co_member
+		where c_id=#{c_Id}
+      ]]>
+	</select>
+	
+
+	<!-- 투표 중복확인검사 -->
+	<select id="checkId" parameterType="java.util.HashMap" resultType="int">
+		<![CDATA[
+		select count(*) from voter where mem_Id = #{mem_Id} and v_Num=#{v_Num}
+		]]>
+	</select>
+	
+	<!-- vs_Num 변경 -->
+	<update id="updateVs_Num" parameterType="java.util.HashMap">
+		UPDATE vote
+		SET vs_Num = '2'
+		WHERE v_Num = #{v_Num}
+	</update>
+	
+
+	
+
+</mapper>

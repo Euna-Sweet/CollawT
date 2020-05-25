@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="logincheck">
+	<resultMap id="logincheckResult01" type="java.util.Map">
+		<result property="mem_Id" column="mem_Id"  />
+	</resultMap>
+	
+	
+	<update id="updatelogincheck" parameterType="java.util.Map">
+		update member
+		set  MEM_LOG = '1'
+		<where>
+		<if test=" mem_Id != ''  and  mem_Id != null">
+		mem_Id = #{mem_Id}
+		</if>
+		</where>
+	</update>
+	
+	
+	<update id="updatelogoutcheck" parameterType="java.util.Map">
+		update member
+		set  MEM_LOG = '0'
+		<where>
+		<if test=" mem_Id != ''  and  mem_Id != null">
+		mem_Id = #{mem_Id}
+		</if>
+		</where>
+	</update>
+	
+	
+
+</mapper>

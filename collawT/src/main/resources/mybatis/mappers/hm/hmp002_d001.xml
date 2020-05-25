@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="hm.hmp002_d001">
+	<resultMap id="hmp002_d001Result01" type="hmp002_d001VO">
+		<result property="id" column="id" />
+		<result property="pwd" column="pwd" />
+		<result property="name" column="name" />
+		<result property="email" column="email" />
+		<result property="joinDate" column="joinDate" />
+	</resultMap>
+
+	<select id="searchList" resultMap="hmp002_d001Result01" parameterType="java.util.Map"> 
+      <![CDATA[
+         select id, pwd, name, email, joinDate
+         from   t_member
+      ]]>
+		<where>
+			<if test=" p_id != ''  and  p_id != null">
+				id = #{p_id}
+			</if>
+		</where>
+	</select>
+	
+	<update id="updateData" parameterType="java.util.Map">
+		update t_member
+		set  pwd = #{pwd}
+		   , name = #{name}
+		where id = #{id}
+	</update>	
+	
+	<insert id="insertData" parameterType="java.util.Map">
+	    <selectKey  resultType="string" keyProperty="key_id" order="BEFORE">
+	       SELECT COUNT(id)+1 FROM t_member
+	    </selectKey>
+		insert into t_member(id, pwd, name, email) values(#{key_id}, #{pwd}, #{name}, #{email})
+	</insert>	
+	
+	<delete id="deleteData" parameterType="java.util.Map">
+		delete t_member
+		where id = #{id}
+	</delete>	
+</mapper>

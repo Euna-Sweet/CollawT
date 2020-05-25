@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd">
+	
+	<!-- Root Context: defines shared resources visible to all other web components -->
+		<!-- <aop:aspectj-autoproxy/> -->
+		
+		<!-- <bean id="googleOAuth2Template"
+		class="org.springframework.social.google.connect.GoogleOAuth2Template">
+		<constructor-arg value="332997436138-o3eojp3gv7d2kddqpsbhme3oqisqt2pl.apps.googleusercontent.com" />
+		<constructor-arg value="kzdyubWtVqUkpKcwYhOtD8jd" />
+	</bean>
+
+
+	<bean id="googleOAuth2Parameters"
+		class="org.springframework.social.oauth2.OAuth2Parameters">
+		<property name="scope" value="profile"></property>
+		<property name="redirectUri"
+			value="http://localhost:9092/member/googleLogin" />
+	</bean>
+
+	<bean id="authInfo" class="project.jeongha.member.vo.AuthInfo">
+		<constructor-arg value="332997436138-o3eojp3gv7d2kddqpsbhme3oqisqt2pl.apps.googleusercontent.com" />
+		<constructor-arg value="YkzdyubWtVqUkpKcwYhOtD8jd" />
+	</bean> -->
+		
+</beans>

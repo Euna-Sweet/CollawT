@@ -1,0 +1,41 @@
+@charset "utf-8";
+/* CSS Document */
+/* anchor*/
+a { outline:none; }
+a:focus { outline:none; }
+a, a:link{text-decoration:none; color:#434343}
+a:hover, a:active{text-decoration:none; color:#396d9f; cursor:pointer; }
+
+.hidden {
+	width:0;
+	height: 0;
+	margin: 0;
+	padding: 0;
+	font-size:0;
+	line-height: 0;
+	overflow:hidden;
+	visibility: hidden
+}
+
+.png24 {tmp:expression(setPng24(this));}
+
+.align_center{text-align:center}
+.float_right{float: right; }
+.float_left{float:left;}
+.clear{clear:both;}
+.hidden{overflow: hidden}
+.bold{font-weight:bold}
+
+.padding_b20{padding-bottom:20px;}
+.margin_t20{margin-top:20px;}
+.margin_r20{margin-right:20px;}
+.margin_b15 {margin-bottom:15px;}
+.margin_r0{ margin-right: 0px !important;}
+.margin_l2{margin-left:2px }
+
+.radio {margin:0 3px 0 0px;  width:13px; height:13px; vertical-align:middle;}
+.checkbox {margin:0 3px 0 0px;  width:13px; height:13px; vertical-align:middle;}
+
+/* hack CR,SF*/
+@media screen and (-webkit-min-device-pixel-ratio:0) 
+{.checkbox, .radio{margin:0 3px 1px 0px;}}

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+   
+<mapper namespace="hm.hmp001_d003">
+	<resultMap id="hmp001_d003Result01" type="hmp001_d003VO">
+		<result property="prod_id" column="prod_id"  />
+		<result property="vend_id" column="vend_id" />
+		<result property="prod_name" column="prod_name" />
+		<result property="prod_price" column="prod_price" />
+		<result property="prod_desc" column="prod_desc" />
+		<result property="vend_name" column="vend_name" />
+	</resultMap>
+
+	<select id="searchList" resultMap="hmp001_d003Result01" parameterType="java.util.Map"> 
+      <![CDATA[
+         select prod_id, prod_name, prod_price, prod_desc, prod_desc, vend_name
+         from   products a, vendors b
+         where	a.vend_id=b.vend_id
+      ]]>
+		<where>
+			<if test=" p_prod_id != ''  and  p_prod_id != null">
+				id = #{p_id}
+			</if>
+		</where>
+	</select>
+
+<!-- 	<select id="searchMod" resultMap="hmp001_d001Result01" parameterType="java.util.Map">  -->
+<!--       <![CDATA[ -->
+<!--          select id, pwd, name, email, joinDate, num -->
+<!--          from   t_member -->
+<!--       ]]> -->
+<!-- 		<where> -->
+<!-- 			<if test=" p_id != ''  and  p_id != null"> -->
+<!-- 				id = #{p_id} -->
+<!-- 			</if> -->
+<!-- 		</where> -->
+<!-- 	</select> -->
+	
+<!-- 	<update id="updateMember" parameterType="java.util.Map"> -->
+<!-- 		update t_member -->
+<!-- 		set  pwd = #{pwd} -->
+<!-- 		   , name = #{name} -->
+<!-- 		   , email = #{email} -->
+<!-- 		   , joinDate = #{joinDate} -->
+<!-- 		   , num = #{num, jdbcType=NUMERIC} -->
+<!-- 		where id = #{id} -->
+<!-- 	</update> -->
+	
+<!-- 	<insert id="insertMember" parameterType="java.util.Map"> -->
+<!-- 		insert into t_member(id, pwd, name, email) values(#{id}, #{pwd}, #{name}, #{email}) -->
+<!-- 	</insert>	 -->
+
+</mapper>

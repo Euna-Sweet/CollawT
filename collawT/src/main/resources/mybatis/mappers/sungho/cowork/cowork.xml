@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cowork">
+	<resultMap id="coworkResult01" type="java.util.Map">
+		<result property="c_Id" column="c_Id"  />
+		<result property="c_Name" column="c_Name" />
+		<result property="c_Comment" column="c_Comment" jdbcType="CLOB" javaType="java.lang.String" />
+		<result property="mem_Id" column="mem_Id" />
+		<result property="c_Category" column="c_Category" />
+	</resultMap>
+	
+	<resultMap id="coworkResult02" type="java.util.Map">
+		<result property="c_Id" column="c_Id"  />
+		<result property="c_Name" column="c_Name" />
+		<result property="c_Comment" column="c_Comment" jdbcType="CLOB" javaType="java.lang.String" />
+		<result property="mem_Id" column="mem_Id" />
+		<result property="c_Category" column="c_Category" />
+	</resultMap>
+	
+	<resultMap id="calendarResult01" type="java.util.Map">
+		<result property="title" column="i_Name"  />
+		<result property="start" column="i_Start" />
+		<result property="end" column="i_End" />
+		<result property="url" column="i_Num" />
+	</resultMap>
+	
+	<resultMap id="calendarResult02" type="java.util.Map">
+		<result property="title" column="v_Name"  />
+		<result property="start" column="v_Start" />
+		<result property="end" column="v_End" />
+		<result property="url" column="v_Num" />
+	</resultMap>
+	
+	<resultMap id="kanbanResult01" type="java.util.Map">
+		<result property="i_Name" column="i_Name"  />
+		<result property="i_Num" column="i_Num" />
+		<result property="ig_Num" column="ig_Num" />
+		<result property="c_Id" column="c_Id"  />
+	</resultMap>
+
+	<select id="searchList" resultMap="coworkResult01" parameterType="coworkVO"> 
+      <![CDATA[
+         select c_Id, c_Name, c_Comment, mem_Id, c_Category
+         from co_work
+       
+      ]]>
+		<where>
+			<if test=" mem_Id != ''  and  mem_Id != null">
+				mem_Id = #{mem_Id}
+			</if>
+		</where>
+		  order by to_number(c_Id) asc
+	</select>
+	
+	
+	<select id="searchMain" resultMap="coworkResult02" parameterType="java.util.Map"> 
+      <![CDATA[
+         select c_Id, c_Name, c_Comment, mem_Id, c_Category
+         from co_work
+      ]]>
+		<where>
+			<if test=" c_Id != ''  and  c_Id != null">
+				c_Id = #{c_Id}
+			</if>
+		</where>
+		  order by to_number(c_Id) asc
+	</select>
+	
+	
+	<select id="selectSqc" resultType="String"> 
+      <![CDATA[
+         select co_work_c_Id.nextval as c_Id
+         from dual
+      ]]>
+	</select>
+	
+	<insert id="insertCowork" parameterType="java.util.Map">
+		insert into co_work(c_Id, c_Name, c_Comment, mem_Id, c_Category) 
+		values(#{c_Id}, #{c_Name}, #{c_Comment}, #{mem_Id} , #{c_Category})
+	</insert>	
+	
+	
+	<delete id="deleteCowork" parameterType="String">
+		delete from co_work where c_Id =#{c_Id}
+	</delete>
+	
+	<update id="updateCowork" parameterType="java.util.Map">
+		update co_work
+		set  c_Name = #{c_Name}
+		   , c_Comment = #{c_Comment}
+		   , mem_Id = #{mem_Id}
+		   , c_Category = #{c_Category}
+		where c_Id = #{c_Id}
+	</update>
+
+	<!-- 이슈용 쿼리 -->
+	<select id="calendarlist" resultMap="calendarResult01" parameterType="java.util.Map"> 
+         	select i_Name , i_Num  , i_Start , i_End
+			from issue
+      <where>
+			<if test=" c_Id != ''  and  c_Id != null">
+			c_Id = #{c_Id}
+			</if>
+		</where>
+	</select>
+	
+	<!-- 투표용 쿼리 -->
+	<select id="calendarvotelist" resultMap="calendarResult02" parameterType="java.util.Map"> 
+         	select v_Name , v_Num  , v_Start , v_End
+			from vote
+      <where>
+			<if test=" c_Id != ''  and  c_Id != null">
+			c_Id = #{c_Id}
+			</if>
+		</where>
+	</select>
+	
+	<!-- 칸반이슈용 쿼리 -->
+	<select id="kanbanlist" resultMap="kanbanResult01" parameterType="java.util.Map"> 
+         	select i_Name , i_Num , ig_Num , c_Id
+			from issue
+      <where>
+			<if test=" c_Id != ''  and  c_Id != null">
+			c_Id = #{c_Id}
+			</if>
+		</where>
+		order by to_number(i_Num) asc
+	</select>
+	
+	<update id="kanbanUpdate" parameterType="java.util.Map">
+		update ISSUE
+		set  ig_Num = #{ig_Num}
+		where i_Num = #{i_Num}
+	</update>
+</mapper>

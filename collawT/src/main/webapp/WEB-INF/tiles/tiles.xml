@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?> <!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN" "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+<tiles-definitions>
+	<definition name="mainLayout"
+		template="/WEB-INF/tiles/common/layout.jsp">
+		<put-attribute name="header"
+			value="/WEB-INF/tiles/common/header.jsp" />
+		<put-attribute name="content" />
+		<put-attribute name="footer"
+			value="/WEB-INF/tiles/common/footer.jsp" />
+	</definition>
+	
+	<definition name="managerLayout"
+		template="/WEB-INF/tiles/common/managerlayout.jsp">
+		<put-attribute name="header"
+			value="/WEB-INF/tiles/common/managerheader.jsp" />
+		<put-attribute name="content" />
+		<put-attribute name="footer"
+			value="/WEB-INF/tiles/common/footer.jsp" />
+	</definition>
+	
+	<definition name="defaultLayout"
+		template="/WEB-INF/tiles/common/defaultLayout.jsp">
+		<put-attribute name="content" />
+	</definition>
+	<definition name="/index" extends="defaultLayout">
+		<put-attribute name="content" value="/WEB-INF/views/index.jsp" />
+	</definition>
+	<definition name="/member/loginPage" extends="defaultLayout">
+		<put-attribute name="content" value="/WEB-INF/views/member/loginPage.jsp" />
+	</definition>
+	<definition name="/member/signup" extends="defaultLayout">
+		<put-attribute name="content" value="/WEB-INF/views/member/signup.jsp" />
+	</definition>
+	<definition name="/member/signupTest1" extends="defaultLayout">
+		<put-attribute name="content" value="/WEB-INF/views/member/signupTest1.jsp" />
+	</definition>
+	<definition name="/chat/chat-ws" extends="defaultLayout">
+		<put-attribute name="content" value="/WEB-INF/views/chat/chat-ws.jsp" />
+	</definition>
+	
+	<definition name="/member/forgotPwd" extends="defaultLayout">
+		<put-attribute name="content" value="/WEB-INF/views/member/forgotPwd.jsp" />
+	</definition>
+	
+	<definition name="/question" extends="defaultLayout">
+		<put-attribute name="content" value="/WEB-INF/views/question.jsp" />
+	</definition>
+	
+	<definition name="contentLayout" template="/WEB-INF/tiles/common/contentLayout.jsp">
+ 	 <put-attribute name="content" />
+	</definition>
+	
+	<definition name="manager/*" extends="managerLayout"> <put-attribute name="content" 
+		value="/WEB-INF/views/manager/{1}.jsp" /> 
+		</definition>
+	<definition name="/manager/*" extends="managerLayout"> <put-attribute name="content" 
+		value="/WEB-INF/views/manager/{1}.jsp" /> 
+		</definition>
+	
+	<definition name="/*" extends="mainLayout">
+		<put-attribute name="content"
+			value="/WEB-INF/views/{1}.jsp" />
+	</definition>
+	<definition name="/*/*" extends="mainLayout"> <put-attribute name="content" 
+		value="/WEB-INF/views/{1}/{2}.jsp" /> 
+		</definition>
+	<definition name="*/*" extends="mainLayout"> <put-attribute name="content" 
+		value="/WEB-INF/views/{1}/{2}.jsp" /> 
+		</definition>
+		
+	
+</tiles-definitions>
+

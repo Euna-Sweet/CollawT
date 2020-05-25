@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="issue">
+	<resultMap id="issueResult01" type="IssueVO">
+		<!-- property는 화면단에서 쓸 이름, column은 데이터컬럼명이랑 동일 -->
+		<result property="i_Num" column="i_Num" />
+		<result property="c_Id" column="c_Id" />
+		<result property="i_Name" column="i_Name" />
+		<result property="i_Content" column="i_Content" jdbcType="CLOB" javaType="java.lang.String"/>
+		<result property="i_Date" column="i_Date" />
+		<result property="i_Start" column="i_Start" />
+		<result property="i_End" column="i_End" />
+		<result property="ig_Num" column="ig_Num" />
+		<result property="mem_Id" column="mem_Id" />
+	</resultMap>
+	
+	<resultMap id="issueResult02" type="java.util.HashMap">
+		<!-- property는 화면단에서 쓸 이름, column은 데이터컬럼명이랑 동일 -->
+		<result property="i_Num" column="i_Num" />
+		<result property="c_Id" column="c_Id" />
+		<result property="i_Name" column="i_Name" />
+		<result property="i_Content" column="i_Content" jdbcType="CLOB" javaType="java.lang.String"/>
+		<result property="i_Date" column="i_Date" />
+		<result property="i_Start" column="i_Start" />
+		<result property="i_End" column="i_End" />
+		<result property="ig_Num" column="ig_Num" />
+		<result property="mem_Id" column="mem_Id" />
+		<result property="mem_Name" column="mem_Name" />
+		<result property="mem_File" column="mem_File" javaType="[B" jdbcType="BLOB"/>
+		<result property="ig_Name" column="ig_Name" />
+		<result property="ig_Color" column="ig_Color" />
+		<result property="charger" column="charger" />
+	</resultMap>
+	
+		<resultMap id="fileResult01" type="java.util.HashMap">
+		<!-- property는 화면단에서 쓸 이름, column은 데이터컬럼명이랑 동일 -->
+		<result property="a_RealName" column="a_RealName" />
+		<result property="a_File" column="a_File" javaType="[B" jdbcType="BLOB"/>
+		<result property="a_NameEx" column="a_NameEx" />
+		<result property="i_Num" column="i_Num"/>
+		<result property="a_Num" column="a_Num" />
+		<result property="a_Size" column="a_Size" />
+
+	</resultMap>
+
+	
+
+	<!-- 글 목록 페이징-->
+<!--  		<select id="searchList" resultMap="issueResult02" parameterType="project.euna.issue.vo.Criteria"> 
+      <![CDATA[
+		select i_Num, c_Id, i_Name, i_Content, i_Date, mem_Id, mem_name, ig_Name, ig_Num, i_Start, i_End
+        from (
+            select I.i_Num, I.c_Id, I.i_Name, I.i_Content, I.i_Date, I.mem_Id, I.i_Start, I.i_End,
+            M.mem_name, IG.ig_Num, IG.ig_Name, 
+            row_number() over(order by I.i_Num desc) as rnum
+            from issue I, member M, Issue_Group IG
+            where I.mem_Id = M.mem_Id
+            and I.ig_Num= IG.ig_Num
+            and I.c_Id=#{c_Id}
+            )
+        where rnum between #{rowStart} and #{rowEnd}
+        order by to_number(i_Num) desc
+      ]]>
+
+	</select> -->
+	
+	<!-- 글 목록 페이징+이슈담당자-->
+	<select id="searchList" resultMap="issueResult02" parameterType="project.euna.issue.vo.Criteria"> 
+	<![CDATA[
+	
+	        
+        select rnum, i_Num, c_Id, i_Name, i_Content, i_Date, mem_Id, i_Start, i_End, mem_name, ig_Num, ig_Name, charger, ig_Color
+        from
+        (
+          select row_number() over(order by I.i_Num desc) as rnum, I.i_Num, I.c_Id, I.i_Name, I.i_Content, I.i_Date, I.mem_Id, I.i_Start, I.i_End, 
+            M.mem_name, IG.ig_Num, IG.ig_Name, c.charger, ig.ig_Color
+            
+            from issue I, member M, Issue_Group IG, V_CHARGERLIST c
+            where I.mem_Id = M.mem_Id
+            and I.ig_Num= IG.ig_Num
+            and c.i_num = i.i_num
+            and c_id=#{c_Id}
+         )
+         where rnum between #{rowStart} and #{rowEnd}
+        order by to_number(i_Num) desc
+	
+	]]>
+
+	</select>
+	
+	
+	
+	<!-- 게시물 총 갯수 -->
+	<select id="listCount" resultType="int" parameterType="project.euna.issue.vo.Criteria"> 
+      <![CDATA[
+        select count(i_Num)
+        from issue
+        where i_Num>0
+        and c_Id=#{c_Id}
+      ]]>
+
+	</select>
+	
+	<!-- 글 목록 조회 시  이슈 담당자 화면에 뿌리기 용-->
+	<select id="chargerList" resultMap="issueResult02"> 
+      <![CDATA[
+			 SELECT c.i_Num , LISTAGG(m.mem_name,',') WITHIN GROUP (ORDER BY m.mem_name)
+			  FROM charger c, member m
+			  where c.mem_id=m.mem_id
+			  and c_id=#{c_Id}
+			 GROUP BY c.i_Num
+      ]]>
+
+	</select>
+	
+
+
+
+	<!-- 글 입력 -->
+	<insert id="issueInsert" parameterType="IssueVO">
+		insert into issue(i_Num, c_Id, i_Name, i_Content, i_Date, ig_Num , mem_Id, i_Start, i_End)
+		values(#{i_Num}, #{c_Id}, #{i_Name}, #{i_Content} ,  
+		(select to_char(sysdate, 'YYYY/MM/DD/ HH24:MI:SS') from dual)
+		, #{ig_Num} , #{mem_Id}, #{i_Start}, #{i_End})
+	</insert>
+<!-- 	<insert id="issueInsert" parameterType="java.util.HashMap">
+		<selectKey resultType="string" keyProperty="i_Num" order="BEFORE">
+        SELECT issue_i_Num.nextval as i_Num FROM dual        
+    	</selectKey>   
+		insert into issue(i_Num, c_Id, i_Name, i_Content, i_Date, ig_Num , mem_Id, i_Start, i_End)
+		values(#{i_Num}, #{c_Id}, #{i_Name}, #{i_Content} ,  
+		(select to_char(sysdate, 'YYYY/MM/DD/ HH24:MI:SS') from dual)
+		, #{ig_Num} , #{mem_Id}, #{i_Start}, #{i_End})
+	</insert> -->
+	
+ 	<!-- 글쓰기 화면 전환 시 글번호 먼저 가져오기 -->
+	<select id="get_i_Num" resultMap="issueResult02"> 
+      <![CDATA[
+		select issue_i_Num.nextval from dual
+      ]]>
+
+	</select>	
+
+
+	<!-- 게시글 조회 -->
+	<select id="issueRead"  parameterType="String" resultMap="issueResult02"> 
+      <![CDATA[
+        select I.i_Num, I.c_Id, I.i_Name, I.i_Content, I.i_Date, I.mem_Id, M.mem_name, I.i_Start, I.i_End, I.ig_Num, IG.ig_Name ,ig.ig_Color, m.mem_File
+		from issue I, member M, issue_group IG
+		where I.mem_Id = M.mem_Id
+		and I.ig_Num = IG.ig_Num
+        and I.i_Num=#{i_Num}
+      ]]>
+	</select>
+
+	<!-- 게시물 삭제 -->
+	<delete id="issueDelete" parameterType="String">
+		DELETE
+		FROM issue
+		WHERE i_Num=#{i_Num}
+	</delete>
+	
+		<!-- 게시물 삭제 시 댓글 삭제 -->
+	<delete id="replyDelete" parameterType="String">
+		DELETE
+		FROM reply
+		WHERE i_Num=#{i_Num}
+	</delete>
+
+	<!-- 게시물 수정 -->
+	<update id="issueUpdate"
+		parameterType="java.util.HashMap">
+		UPDATE issue
+		SET i_Name = #{i_Name},
+		i_Content = #{i_Content},
+		i_Date = (select to_char(sysdate, 'YYYY/MM/DD/ HH24:MI:SS') from dual),
+		i_Start = #{i_Start},
+		i_End = #{i_End},
+		ig_Num = #{ig_Num}
+		WHERE i_Num=#{i_Num}
+	</update>
+	
+	
+			<!-- 협업공간 조회 -->
+ 	<select id="igRead"  resultType="java.util.HashMap"> 
+      <![CDATA[
+			select *
+			from issue_group
+			order by ig_Num asc
+      ]]>
+	</select> 
+	
+	
+	<!-- 협업공간 내 멤버 조회 -->
+	 <select id="comemRead"  resultType="java.util.HashMap"> 
+      <![CDATA[
+			select m.mem_name, m.mem_id
+			from member m, co_member co
+			where m.mem_id = co.mem_id
+			and c_id = #{c_id}
+      ]]>
+	</select> 
+	
+	<!-- 이슈 담당자 삽입 -->
+	<insert id="comemInsert" parameterType="java.util.Map">
+		insert into charger(cr_Num, i_Num, c_Id, cr_Status, mem_Id) 
+		values(CR_NUM_SEQ.nextval, #{i_Num}, #{c_Id}, #{cr_Status}, #{mem_Id})
+	</insert>	
+	
+	
+	<!-- 이슈 담당자 조회 -->
+	<select id="chargerRead"  resultType="java.util.HashMap"> 
+      <![CDATA[
+			select m.mem_id, m.mem_name, m.mem_File
+			from charger ch, member m
+			where m.mem_id=ch.mem_id
+			and i_Num=#{i_Num}
+      ]]>
+	</select> 
+	
+	<!-- 이슈 담당자 수정(삭제 후 다시 삽입) -->
+	<delete id="chargerDelete" parameterType="String">
+		DELETE
+		FROM charger
+		WHERE i_Num=#{i_Num}
+	</delete>
+	
+	
+	
+	
+		<!-- 협업공간 조회 -->
+ 	<select id="coRead"  resultType="java.util.HashMap"> 
+      <![CDATA[
+      
+     		select c.c_name, c.c_id
+            from co_member co, co_work c
+            where c.c_id=co.c_id
+            and co.mem_id=#{mem_id}
+            
+      ]]>
+	</select>
+	
+		<!-- 다른협업공간으로 복제 입력 -->
+		
+	<insert id="issueCopy" parameterType="IssueVO">
+	<selectKey resultType="string" keyProperty="i_Num" order="BEFORE">
+        SELECT issue_i_Num.nextval as i_Num FROM dual        
+    	</selectKey>   
+		insert into issue(i_Num, c_Id, i_Name, i_Content, i_Date, ig_Num , mem_Id, i_Start, i_End)
+		values(#{i_Num}, #{c_Id}, #{i_Name}, #{i_Content} ,  
+		(select to_char(sysdate, 'YYYY/MM/DD/ HH24:MI:SS') from dual)
+		, #{ig_Num} , #{mem_Id}, #{i_Start}, #{i_End})
+	</insert>
+	
+	
+	<!-- 홈 화면 상태 카운트 -->
+	<select id="igCount"  resultType="java.util.HashMap"> 
+      <![CDATA[
+    select NVL(igc.igcount,0)as igcount, ig.ig_Num, ig.ig_Name, ig.ig_Color
+    from issue_group ig left outer join 
+           (select count(i_Num) as igcount, ig_Num
+           from issue
+           where c_Id=#{c_Id}
+           group by ig_Num
+           order by ig_Num asc)igc
+    on ig.ig_Num = igc.ig_Num
+      ]]>
+	</select> 
+	
+	<!-- 홈 화면 이슈/투표 최근글 -->
+	<select id="recentBoard"  resultType="java.util.HashMap"> 
+      <![CDATA[
+  select c_id, c_name, i_name, i_date, i_start, i_end, mem_id, mem_name, boardtype, i_Num, rnum, mem_File
+  from(
+    select c_id, c_name, i_name, i_date, i_start, i_end, mem_id, mem_name, boardtype, i_Num, row_number() over(order by i_date desc) as rnum, mem_File
+    from(
+            (select i.c_id as c_id, c.c_name as c_name, i.i_name as i_name, i.i_date as i_date, i.i_start as i_start, i.i_end as i_end, i.mem_id as mem_id, m.mem_name as mem_name,
+           '이슈' as boardtype, i.i_Num as i_Num, m.mem_File
+            from issue i, member m, co_work c
+            where i.mem_Id = m.mem_Id
+            and c.c_id=i.c_id
+            and c.c_id=#{c_Id}
+            )
+            union all
+            (select v.c_id as c_id, c.c_name as c_name, v.v_name as i_name, v.v_date as i_date, v.v_start as i_start, v.v_end as i_end, v.mem_id as mem_id, m.mem_name as mem_name,
+            '투표' as boardtype, v.v_num as i_Num, m.mem_File
+            from vote v, member m, co_work c
+            where v.mem_Id = m.mem_Id
+            and v.c_id=c.c_id
+            and c.c_id=#{c_Id}
+            )
+            )
+            )
+        where rnum between '1' and '5'
+        order by i_date desc
+      ]]>
+	</select> 
+
+
+	<!-- 홈 화면 진행중인 투표글 -->
+	<select id="voteOn"  resultType="java.util.HashMap"> 
+      <![CDATA[
+
+        select v.c_id as c_id, c.c_name as c_name, v.v_name as i_name, v.v_date as i_date, v.v_start as i_start, v.v_end as i_end, v.mem_id as mem_id, m.mem_name as mem_name,
+            v.v_num as i_Num, row_number() over(order by v_date desc) as rnum, v.vs_Num as vs_Num, m.mem_File as mem_File
+            from vote v, member m, co_work c
+            where v.mem_Id = m.mem_Id
+            and v.c_id=c.c_id
+            and c.c_id=#{c_Id}
+            and v.vs_Num='1'
+
+      ]]>
+	</select> 
+	
+	
+		<!-- 투표 참여율 -->
+	<select id="votePercent"  resultType="String"> 
+      <![CDATA[
+  select round(NVL(vte.voter/decode((m.memcount*v.votecount),0,null,(m.memcount*v.votecount)),0)*100,0) as percent
+  from
+    (select memcount, c_Id
+        from(
+            select count(cm.mem_Id) as memcount, co.c_Id
+            from co_work co left outer join co_member cm
+            on cm.c_Id=co.c_Id
+            group by co.c_Id
+            )
+       where c_Id=#{c_Id}
+    )m,
+   (select votecount, c_Id
+        from(
+            select count(vo.v_Num) as votecount, co.c_Id
+            from co_work co left outer join vote vo
+            on vo.c_Id=co.c_Id
+            group by co.c_Id
+            )
+       where c_Id=#{c_Id}
+    )v,
+     (select voter, c_Id
+         from
+         (
+            select count(vt.mem_Id) as voter, co.c_Id
+            from co_work co left outer join voter vt
+            on vt.c_Id=co.c_Id
+            group by co.c_Id
+         )
+        where c_Id=#{c_Id}
+        )vte
+    where m.c_Id=v.c_Id
+    and m.c_Id=vte.c_Id
+
+      ]]>
+	</select> 
+	
+	
+
+
+</mapper>

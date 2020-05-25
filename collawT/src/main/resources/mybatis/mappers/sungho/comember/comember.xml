@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="comember">
+	<resultMap id="comemberResult01" type="java.util.Map">
+		<result property="c_Id" column="c_Id" />
+		<result property="c_Name" column="c_Name" />
+		<result property="mem_Id" column="mem_Id" />
+		<result property="mem_Name" column="mem_Name" />
+		<result property="mem_File" column="mem_File" />
+		<result property="grade" column="grade" />
+		<result property="mem_Log" column="mem_Log" />
+		
+	</resultMap>
+
+	<!-- 회원별 메뉴 리스트를 받위한 쿼리 -->
+	<select id="searchList" resultMap="comemberResult01"
+		parameterType="java.util.Map"> 
+      <![CDATA[
+         select c_Id, mem_Id, grade, c_Name
+			from(select m.c_Id, m.mem_Id, m.grade, w.c_Name
+       		  from co_member m, co_work w
+         		 where m.c_Id = w.c_Id
+         )
+      ]]>
+		<where>
+			<if test=" mem_Id != ''  and  mem_Id != null">
+				mem_Id = #{mem_Id}
+			</if>
+		</where>
+		order by to_number(c_Id) asc
+	</select>
+	<!-- /회원별 메뉴 리스트를 받위한 쿼리 -->
+
+	<!-- 공간맴버 리스트를 위한 쿼리 -->
+	<select id="memberList" resultMap="comemberResult01"
+		parameterType="java.util.Map"> 
+      <![CDATA[
+         select c_Id, mem_Id, mem_Name, grade, mem_File , mem_Log
+			from(select c.c_Id, c.mem_Id, m.mem_Name, c.grade, m.mem_File , m.mem_Log
+       		  from co_member c, member m
+         		 where m.mem_Id = c.mem_Id
+         )
+      ]]>
+		<where>
+			<if test=" c_Id != ''  and  c_Id != null">
+				c_Id = #{c_Id}
+			</if>
+		</where>
+		order by to_number(c_Id) asc
+	</select>
+	<!-- /공간맴버 리스트를 위한 쿼리 -->
+	
+	<insert id="insertComember" parameterType="java.util.Map">
+		insert into
+		co_member(c_Id, mem_Id, grade)
+		values(#{c_Id}, #{mem_Id}, '02')
+	</insert>
+
+
+	<delete id="deleteComember" parameterType="java.util.Map">
+		delete from co_member
+		<where>
+			<choose>
+				<when
+					test="c_Id != '' and c_Id != null and mem_Id != ''  and  mem_Id != null">
+					c_Id = #{c_Id} and mem_Id = #{mem_Id}
+				</when>
+				<when test="c_Id != '' and c_Id != null">
+					c_Id = #{c_Id}
+				</when>
+				<when test="mem_Id != ''  and  mem_Id != null">
+					mem_Id = #{mem_Id}
+				</when>
+			</choose>
+		</where>
+	</delete>
+	
+	<delete id="deleteMember" parameterType="java.util.Map">
+		delete from co_member
+		<where>
+			<choose>
+				<when
+					test="c_Id != '' and c_Id != null and mem_Id != ''  and  mem_Id != null">
+					c_Id = #{c_Id} and mem_Id = #{mem_Id}
+				</when>
+				<when test="c_Id != '' and c_Id != null">
+					c_Id = #{c_Id}
+				</when>
+				<when test="mem_Id != ''  and  mem_Id != null">
+					mem_Id = #{mem_Id}
+				</when>
+			</choose>
+		</where>
+	</delete>
+
+	<delete id="deleteComemberAll" parameterType="java.util.Map">
+		delete from co_member where c_Id =#{c_Id}
+	</delete>
+
+</mapper>

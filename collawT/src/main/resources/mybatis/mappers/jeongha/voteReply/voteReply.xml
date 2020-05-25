@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="voteReply">
+	<resultMap id="replyResult01" type="VoteReplyVO">
+		<!-- property는 화면단에서 쓸 이름, column은 데이터컬럼명이랑 동일 -->
+		<result property="v_Num" column="v_Num" />
+		<result property="vr_Num" column="vr_Num" />
+		<result property="vr_Content" column="vr_Content" jdbcType="CLOB" javaType="java.lang.String"/>
+		<result property="vr_Date" column="vr_Date" />
+		<result property="mem_Id" column="mem_Id" />
+		<result property="c_Id" column="c_Id" />
+	</resultMap>
+	
+	<resultMap id="replyResult02" type="java.util.HashMap">
+		<!-- property는 화면단에서 쓸 이름, column은 데이터컬럼명이랑 동일 -->
+		<result property="vr_Num" column="vr_Num" />
+		<result property="vr_Content" column="vr_Content" jdbcType="CLOB" javaType="java.lang.String"/>
+		<result property="vr_Date" column="vr_Date" />
+		<result property="v_Num" column="v_Num" />
+		<result property="c_Id" column="c_Id" />
+		<result property="mem_Id" column="mem_Id" />
+		<result property="mem_Name" column="mem_Name" />
+		<result property="mem_File" column="mem_File" javaType="[B" jdbcType="BLOB"/>
+		
+	</resultMap>
+
+	
+
+	<!-- 댓글 목록 -->
+	<select id="searchList" resultMap="replyResult02"> 
+      <![CDATA[
+     	 select VR.vr_Num, VR.vr_Content, VR.vr_Date, VR.v_Num, VR.c_Id, VR.mem_Id, M.mem_Name, M.mem_File
+		from vote_reply VR, member M
+		where M.mem_Id=vR.mem_Id
+		and v_Num = #{v_Num}
+		order by vr_Num asc
+      ]]>
+
+	</select>
+	
+
+	<!-- 댓글 입력 -->
+	<insert id="replyInsert" parameterType="VoteReplyVO">
+	<selectKey resultType="string" keyProperty="vr_Num" order="BEFORE">
+        SELECT vote_reply_seq.nextval as vr_Num FROM dual        
+    </selectKey> 
+		insert into vote_reply(vr_Num, vr_Content, vr_Date, v_Num, c_Id, mem_Id)
+		values(#{vr_Num}, #{vr_Content}, (select to_char(sysdate, 'YYYY/MM/DD/ HH24:MI:SS') from dual), #{v_Num} , #{c_Id} , #{mem_Id})
+	</insert>
+
+
+
+	<!-- 댓글 삭제 -->
+	<delete id="replyDelete" parameterType="String">
+		DELETE
+		FROM vote_reply
+		WHERE vr_Num=#{vr_Num}
+	</delete>
+	
+
+	
+	<!-- 댓글 수정-->
+	<update id="replyUpdate" parameterType="project.jeongha.reply.vo.VoteReplyVO">
+		UPDATE vote_reply
+		SET vr_Content = #{vr_Content}, vr_Date=(select to_char(sysdate, 'YYYY/MM/DD/ HH24:MI:SS') from dual)
+		WHERE vr_Num=#{vr_Num}
+	</update>
+
+</mapper>

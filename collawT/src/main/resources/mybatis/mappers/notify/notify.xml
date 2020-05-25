@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+   
+<mapper namespace = "notify">
+
+	<resultMap id ="notifyResult01" type = "NotifyVO">
+		<result property = "not_Num" column = "not_Num"/>
+		<result property = "i_Num" column = "i_Num"/>
+		<result property = "not_Status" column = "not_Status"/>
+		<result property = "not_Kind" column = "not_Kind"/>
+		<result property = "mem_Id" column = "mem_Id"/>
+		<result property = "c_Id" column = "c_Id"/>
+	</resultMap>
+	
+	<resultMap id ="notifyResult02" type = "java.util.Map">
+		<result property = "not_Num" column = "not_Num"/>
+		<result property = "i_Num" column = "i_Num"/>
+		<result property = "not_Status" column = "not_Status"/>
+		<result property = "not_Kind" column = "not_Kind"/>
+		<result property = "mem_Id" column = "mem_Id"/>
+		<result property = "c_Id" column = "c_Id"/>
+		<result property = "i_Date" column = "i_Date"/>
+		<result property = "i_Content" column = "i_Content" jdbcType="CLOB" javaType="java.lang.String"/>
+		<result property = "v_Num" column = "v_Num"/>
+	</resultMap>
+	
+	<resultMap id="replyResult01" type="ReplyVO">
+		<!-- property는 화면단에서 쓸 이름, column은 데이터컬럼명이랑 동일 -->
+		<result property="i_Num" column="i_Num" />
+		<result property="r_Num" column="r_Num" />
+		<result property="r_Content" column="r_Content" />
+		<result property="r_Date" column="r_Date" />
+		<result property="mem_Id" column="mem_Id" />
+		<result property="c_Id" column="c_Id" />
+	</resultMap>
+	
+	
+	<!-- 헤더 알림 카운트~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	<!-- 이슈 개수 카운트 -->
+	<select id="viewNotify" resultMap = "notifyResult02" parameterType="java.util.Map">
+	<![CDATA[
+          select *
+              from notify
+              where not_Status = '0'
+              and mem_Id = #{mem_Id}
+              and not_Kind = '1'      
+      ]]>			
+	</select>
+	
+	
+	
+	<!-- 투표글 개수 카운트 -->
+	<select id="viewVote" resultMap="notifyResult02" parameterType="java.util.Map">
+	<![CDATA[
+		 select *
+		 from notify
+		 where not_Status = '0'
+		 and mem_Id = #{mem_Id}
+		 and not_Kind = '3'
+	 ]]>
+	
+	</select>
+	
+		<!-- 댓글 이슈 댓글 +투표 댓글개수 카운트 -->
+	<select id="viewReply" resultMap = "notifyResult02" parameterType="java.util.Map">
+		<![CDATA[
+		    select *
+		    from(
+		        select *
+		        from notify
+		        where not_Kind = '2' or not_Kind = '4'
+
+		        )
+		    where mem_Id = #{mem_Id}
+		    and not_status = '0'
+	         
+	      ]]>			
+	</select>
+	
+
+ <!-- 글 입력시 알림 DB에 넣는 것들~~~~~~~~~~~~~~~~~~ -->
+ 
+ <!-- 이슈 글 입력시 알림 추가 -->
+ <insert id="notifyInsert" parameterType = "java.util.Map">
+<![CDATA[
+	insert into notify(not_Num, i_Num, not_Status, not_Kind, mem_Id, c_Id)
+    select notify_seq.nextval,#{i_Num},'0','1',mem_Id,c_Id 
+    from co_member
+    where c_Id = #{c_Id}
+    and mem_Id not in #{mem_Id}
+	]]>
+</insert>
+	
+	 <!-- 이슈 댓글 입력시 알림 추가 -->
+<insert id="replyInsertNotify" parameterType="replyVO">
+<![CDATA[
+    merge into notify n
+    using (select mem_Id from issue where i_Num = #{i_Num})i
+    on (i.mem_Id = #{mem_Id})
+    when not matched then
+    insert(not_Num, i_Num, not_Status, not_Kind, mem_Id, c_Id, r_Num)
+    values(notify_seq.nextval,#{i_Num},'0','2',i.mem_Id,#{c_Id}, #{r_Num})
+]]>
+</insert>
+
+ <!-- 투표 글 입력시 알림 추가 -->
+<insert id="voteInsertNotify" parameterType ="java.util.Map">
+<![CDATA[
+	insert into notify(not_Num,v_Num, not_Status, not_Kind, mem_Id, c_Id)
+    select notify_seq.nextval,#{v_Num},'0','3',mem_Id,c_Id 
+    from co_member
+    where c_Id = #{c_Id}
+    and mem_Id not in #{mem_Id}
+]]>
+</insert>
+
+ <!-- 투표 댓글 입력시 알림 추가 -->
+<insert id="votereplyInsertNotify" parameterType="voteReplyVO">
+<![CDATA[
+    merge into notify n
+    using (select mem_Id from vote where v_Num = #{v_Num})i
+    on (i.mem_Id = #{mem_Id})
+    when not matched then
+    insert(not_Num, v_Num, not_Status, not_Kind, mem_Id, c_Id, vr_Num)
+    values(notify_seq.nextval,#{v_Num},'0','4',i.mem_Id,#{c_Id},#{vr_Num})
+]]>
+</insert>
+
+<!-- 글 읽거나 x 눌렀을 때 상태 변환하는 것들~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+<!-- 글이나 댓글이 삭제되었을 경우 알림에서도 삭제하기 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+	
+	<!-- 이슈 상태 변환 -->
+	<update id ="notifyUpdate">
+	<![CDATA[
+	update notify set not_Status = '1'
+	where i_Num = #{i_Num}
+	and not_Kind = '1'
+	and not_Status = '0'
+	  ]]>
+	</update>
+	
+		<!-- 이슈 댓글 상태 변환 -->
+	<update id ="replyUpdate">
+	<![CDATA[
+	update notify set not_Status = '1'
+	where r_Num = #{r_Num}
+	and not_Kind = '2'
+	and not_Status = '0'
+	]]>
+	</update>
+	
+	<!-- 투표 상태 변환 -->
+	<update id ="voteUpdate">
+	<![CDATA[
+	update notify set not_Status = '1'
+	where v_Num = #{v_Num}
+	and not_Kind = '3'
+	and not_Status = '0'	
+	]]>
+	</update>
+	
+	<!-- 투표 댓글 상태 변환 -->
+	<update id ="votereplyUpdate">
+	<![CDATA[
+	update notify set not_Status = '1'
+	where vr_Num = #{vr_Num}
+	and not_Kind = '4'
+	and not_Status = '0'
+	]]>
+	</update>
+	
+	
+	
+
+
+</mapper>

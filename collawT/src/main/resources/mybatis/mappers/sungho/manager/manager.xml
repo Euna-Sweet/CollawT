@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="manager">
+	<resultMap id="managerResult01" type="java.util.Map">
+		<result property="mem_Id" column="mem_Id" />
+		<result property="mem_Pwd" column="mem_Pwd" />
+		<result property="mem_Name" column="mem_Name" />
+		<result property="mem_JoinDate" column="mem_JoinDate" />
+		<result property="mem_Loginapi" column="mem_Loginapi" />
+	</resultMap>
+
+	<select id="searchList" resultMap="managerResult01" parameterType="java.util.Map"> 
+      <![CDATA[
+         select mem_Id, mem_Pwd, mem_Name,  to_date(mem_joindate,'yy/mm/dd') as mem_JoinDate , mem_Loginapi
+         from   MEMBER
+      ]]>
+		<where>
+			<choose>
+				<when test="mem_Id != '' and mem_Id != null and mem_Name != ''  and  mem_Name != null 
+					and mem_Loginapi != ''  and  mem_Loginapi != null " >
+					<![CDATA[
+					mem_Id like '%'||#{mem_Id}||'%' and mem_Name like '%'||#{mem_Name}||'%' and mem_Loginapi like '%'||${mem_Loginapi}||'%'
+					]]>
+				</when>
+				<when test="mem_Id != '' and mem_Id != null and mem_Name != ''  and  mem_Name != null" >
+					mem_Id like '%'||#{mem_Id}||'%' and mem_Name like '%'||#{mem_Name}||'%'
+				</when>
+				<when test="mem_Id != '' and mem_Id != null and mem_Loginapi != ''  and  mem_Loginapi != null" >
+					mem_Id like '%'||#{mem_Id}||'%' and mem_Loginapi like '%'||${mem_Loginapi}||'%'
+				</when>
+				<when test="mem_Name != '' and mem_Name != null and mem_Loginapi != ''  and  mem_Loginapi != null" >
+					mem_Name like '%'||#{mem_Name}||'%' and mem_Loginapi like '%'||${mem_Loginapi}||'%'
+				</when>
+				<when test="mem_Id != '' and mem_Id != null">
+				<![CDATA[
+					mem_Id like '%'||#{mem_Id}||'%'
+					]]>
+				</when>
+				<when test="mem_Name != ''  and  mem_Name != null">
+					mem_Name like '%'||#{mem_Name}||'%'
+				</when>
+				<when test="mem_Loginapi != ''  and  mem_Loginapi != null">
+					mem_Loginapi like '%'||${mem_Loginapi}||'%'
+				</when>
+			</choose>
+		</where>
+		
+	</select>
+	
+	
+	<!-- 회원정보는 별명만 변경가능하게 했음 -->
+	<update id="updateData" parameterType="java.util.Map">
+		update member
+		set  mem_Name = #{mem_Name}
+		where mem_Id = #{mem_Id}
+	</update>	
+	
+	<insert id="insertData" parameterType="java.util.Map">
+	 <!-- 시퀀스랑 비슷하게 적용 버그생기니 만들어놓은 시퀀스 사용하세요-->
+	   <!--  <selectKey  resultType="string" keyProperty="key_id" order="BEFORE">
+	       SELECT COUNT(id)+1 FROM t_member
+	    </selectKey>  -->
+		insert into member(mem_Id, mem_Pwd, mem_Name) values(#{mem_Id}, #{mem_Pwd}, #{mem_Name})
+	</insert>	
+	
+	<delete id="deleteData" parameterType="java.util.Map">
+		delete member
+		where mem_Id = #{mem_Id}
+	</delete>	 
+</mapper>

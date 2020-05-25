@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="personal_appendix">
+		<resultMap id="fileResult01" type="java.util.HashMap">
+		<!-- property는 화면단에서 쓸 이름, column은 데이터컬럼명이랑 동일 -->
+		<result property="p_a_RealName" column="p_a_RealName" />
+		<result property="p_a_File" column="p_a_File" javaType="[B" jdbcType="BLOB"/>
+		<result property="p_a_NameEx" column="p_a_NameEx" />
+		<result property="p_Num" column="p_Num"/>
+		<result property="p_a_Num" column="p_a_Num" />
+		<result property="p_a_Size" column="p_a_Size" />
+		<result property="p_a_Del" column="p_a_Del" />
+
+	</resultMap>
+
+	
+	
+	<!-- 파일 업로드 -->
+
+ 	<insert id="saveFile" parameterType="java.util.HashMap">
+		insert into personal_appendix(p_a_Num, p_a_RealName, p_a_File, p_a_NameEx, p_Num, p_a_Size)
+		values(PERSONAL_APPENDIX_SEQ.nextval, #{p_a_RealName}, #{p_a_File}, #{p_a_NameEx}, #{p_Num}, #{p_a_Size})
+	</insert>
+	
+	
+	<!-- 파일 목록 -->
+ 	<select id="fileList" resultMap="fileResult01" parameterType="String"> 
+      <![CDATA[
+		select *
+		from personal_appendix
+		where p_Num=#{p_Num}
+		and p_a_Del = 'N'
+		order by to_number(p_a_Num) desc
+      ]]>
+
+	</select>
+
+	
+	<!-- 파일 다운로드 -->
+	<select id="download" resultMap="fileResult01">
+		SELECT *
+		FROM personal_appendix
+		where p_a_Num=#{p_a_Num}
+	</select>
+	
+
+	
+		<!-- 첨부파일 수정/삭제 -->
+	<update id="fileUpdate"	parameterType="Personal_appendixVO">
+		UPDATE personal_appendix
+		SET p_a_Del = 'Y'
+		WHERE p_a_Num=#{p_a_Num}
+	</update>
+	
+	
+	<!-- 협업공간 첨부파일 복사 -->
+	 <insert id="copyFile" parameterType="java.util.HashMap">
+		insert into personal_appendix(p_a_RealName, p_a_File, p_a_NameEx, p_Num, p_a_Num, p_a_Size, p_a_Del)
+	    select a_RealName, a_File, a_NameEx, #{redirectp_Num}, PERSONAL_APPENDIX_SEQ.nextval as p_a_Num, a_Size, a_Del
+	    from appendix
+	    where i_Num = #{i_Num}
+	    and a_Del = 'N'
+	</insert>
+	
+		<!-- 협업공간 첨부파일 복사 -->
+	 <insert id="copyFiletoCowork" parameterType="java.util.HashMap">
+		insert into appendix(a_RealName, a_File, a_NameEx, i_Num, a_Num, a_Size, a_Del)
+	    select p_a_RealName, p_a_File, p_a_NameEx, #{redirecti_Num}, appendix_seq.nextval as p_a_Num, p_a_Size, p_a_Del
+	    from personal_appendix
+	    where p_Num = #{p_Num}
+	    and p_a_Del = 'N'
+	</insert>
+	
+	
+		<!-- 작성 취소 시 파일 없애기 -->
+	<delete id="fileDelete" parameterType="String">
+		DELETE
+		FROM personal_appendix
+		WHERE p_Num=#{p_Num}
+	</delete>
+ 
+
+</mapper>

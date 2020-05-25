@@ -1,0 +1,965 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="whole_search">
+
+	
+	<resultMap id="issueResult" type="java.util.HashMap">
+		<!-- property는 화면단에서 쓸 이름, column은 데이터컬럼명이랑 동일 -->
+		<result property="i_Num" column="i_Num"/>
+		<result property="c_Id" column="c_Id" />
+		<result property="i_Name" column="i_Name" />
+		<result property="i_Date" column="i_Date" />
+		<result property="ig_Num" column="ig_Num" />
+		<result property="mem_Id" column="mem_Id" />
+		<result property="c_Name" column="c_Name" />
+		<result property="mem_Name" column="mem_Name" />
+		<result property="ig_Name" column="ig_Name" />
+		<result property="ig_Color" column="ig_Color" />
+		<result property="wr_mem_Id" column="wr_mem_Id" />
+		<result property="rnum" column="rnum" />
+		<result property="i_Content" column="i_Content" jdbcType="CLOB" javaType="java.lang.String"/>
+		<result property="keyword" column="keyword" />
+	</resultMap>
+	
+	<resultMap id="fileResult" type="java.util.HashMap">
+		<!-- property는 화면단에서 쓸 이름, column은 데이터컬럼명이랑 동일 -->
+		<result property="a_File" column="a_File"/>
+		<result property="a_Realname" column="a_Realname" />
+		<result property="a_NameEx" column="a_NameEx" />
+		<result property="a_Num" column="a_Num" />
+		<result property="a_Del" column="a_Del" />
+		<result property="a_Size" column="a_Size" />
+		<result property="i_Num" column="i_Num" />
+		<result property="c_Id" column="c_Id" />
+		<result property="i_Name" column="i_Name" />
+		<result property="i_Date" column="i_Date" />
+		<result property="wr_mem_Id" column="wr_mem_Id" />
+		<result property="c_Name" column="c_Name" />
+		<result property="mem_Name" column="mem_Name" />
+		<result property="rnum" column="rnum" />
+		<result property="i_Content" column="i_Content" jdbcType="CLOB" javaType="java.lang.String"/>
+		<result property="ig_Num" column="ig_Num" />
+		<result property="ig_Name" column="ig_Name" />
+		<result property="wr_mem_Id" column="wr_mem_Id" />
+		<result property="ig_Color" column="ig_Color" />
+		
+	</resultMap>
+
+
+	<resultMap id="voteResult" type="java.util.HashMap">
+		<!-- property는 화면단에서 쓸 이름, column은 데이터컬럼명이랑 동일 -->
+		<result property="c_Id" column="c_Id"/>
+		<result property="v_Num" column="v_Num" />
+		<result property="v_Content" column="v_Content" jdbcType="CLOB" javaType="java.lang.String"/>
+		<result property="wr_mem_Id" column="wr_mem_Id" />
+		<result property="v_Date" column="v_Date" />
+		<result property="v_Name" column="v_Name" />
+		<result property="vs_Num" column="vs_Num" />
+		<result property="v_Subject" column="v_Subject" />
+		<result property="mem_Name" column="mem_Name" />
+		<result property="rnum" column="rnum" />
+		<result property="c_Name" column="c_Name" />
+		<result property="vs_Name" column="vs_Name" />
+		<result property="vs_Color" column="vs_Color" />
+	</resultMap>
+	
+	<resultMap id="replyResult" type="java.util.HashMap">
+		<!-- property는 화면단에서 쓸 이름, column은 데이터컬럼명이랑 동일 -->
+		<result property="r_Num" column="r_Num"/>
+		<result property="r_Content" column="r_Content" jdbcType="CLOB" javaType="java.lang.String"/>
+		<result property="r_Date" column="r_Date" />
+		<result property="i_Num" column="i_Num" />
+		<result property="c_Id" column="c_Id" />
+		<result property="wr_mem_Id" column="wr_mem_Id" />
+		<result property="mem_Name" column="mem_Name" />
+		<result property="c_Name" column="c_Name" />
+		<result property="i_Name" column="i_Name" />
+		<result property="rnum" column="rnum" />
+		<result property="ig_Num" column="ig_Num" />
+		<result property="ig_Name" column="ig_Name" />
+		<result property="ig_Color" column="ig_Color" />
+	</resultMap>
+
+
+<!-- 이슈~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	
+	<!-- 이슈검색 뷰 -->
+	<select id="searchIssue" resultMap="issueResult" parameterType="project.euna.whole_search.vo.issueCriteria"> 
+      <![CDATA[
+ 
+ select rnum, i_Num, c_Id, i_Name, i_Date, ig_Num, wr_mem_Id, c_Name, mem_Name, ig_Name, i_Content, ig_Color
+ from
+ (
+        select i_Num, c_Id, i_Name, i_Date, ig_Num, wr_mem_Id, c_Name, mem_Name, ig_Name, row_number() over(order by i_date desc) as rnum, i_Content, ig_Color
+                  from
+                      (
+                      (select I.I_NUM as i_Num, I.C_ID as c_Id, I.I_NAME as i_Name, I.I_DATE as i_Date, I.IG_NUM as ig_Num, I.MEM_ID as wr_mem_Id, I.I_CONTENT as i_Content,
+                              C.C_NAME as c_Name,
+                              M.MEM_NAME as mem_Name,
+                              IG.IG_NAME as ig_Name, IG.IG_COLOR as ig_Color
+                       from ISSUE I, CO_WORK C, MEMBER M, ISSUE_GROUP IG
+                       where C.C_ID=I.C_ID
+                       and M.MEM_ID=I.MEM_ID
+                       and I.IG_NUM = IG.IG_NUM
+                       
+                       and C.C_ID IN
+                          (
+                          select C_ID from CO_MEMBER where MEM_ID=#{mem_Id}
+                          )
+                        
+                       )
+                      union all
+                      (select P.P_NUM as i_Num, P.MEM_ID as c_Id, P.P_I_NAME as i_Name, P.P_I_DATE as i_Date, null as ig_Num, P.MEM_ID as wr_mem_Id, P.P_I_CONTENT as i_content,
+                              null as c_Name,
+                              M.MEM_NAME as mem_Name,
+                              null as ig_Name, null as ig_Color
+                          from PERSONAL P, MEMBER M
+                          where M.MEM_ID=P.MEM_ID
+                          and M.MEM_ID = #{mem_Id}
+                      )
+                  )
+                       ]]>
+       <trim prefix="WHERE" prefixOverrides="AND|OR">
+				<if test="keyword != null and keyword != '' ">
+				 <![CDATA[
+				 	(REPLACE(upper( REGEXP_REPLACE( I_NAME,'<[^>]*>|\&([^;])*;', '') ),' ','')
+					|| REPLACE(upper(REGEXP_REPLACE( i_Content,'<[^>]*>|\&([^;])*;', '')),' ','')) 
+					like CONCAT('%' || REPLACE(upper(#{keyword}),' ',''), '%')
+					 ]]>
+				</if>
+				<if test="c_Id != null and c_Id != '' and c_Id != 'myspace' ">
+					AND c_Id = #{c_Id}
+				</if>
+				<if test="c_Id == 'myspace' ">
+					AND c_Id = #{mem_Id}
+				</if>
+				<if test="wr_mem_Id != null and wr_mem_Id != '' ">
+					AND wr_mem_Id = #{wr_mem_Id}
+				</if>
+				<if test="ig_Num != null and ig_Num != '' ">
+					AND ig_Num = #{ig_Num}
+				</if>
+		</trim>
+              
+     <![CDATA[
+     )
+    where rnum between #{rowStart} and #{rowEnd}
+    
+    ]]>
+      	
+	      	<choose>
+	      		<when test="order == 'asc'">
+	      			order by i_Date asc
+	      		</when>
+	      		<otherwise>
+	      			order by i_Date desc
+	      		</otherwise>
+	      	</choose>
+		
+    
+	</select>
+	
+	
+	<!-- 이슈 검색결과 총 갯수 -->
+	<select id="issueCount" resultType="int" parameterType="project.euna.whole_search.vo.issueCriteria"> 
+      <![CDATA[
+            select count(*)
+                  from
+                      (
+                      (select I.I_NUM as i_Num, I.C_ID as c_Id, I.I_NAME as i_Name, I.I_DATE as i_Date, I.IG_NUM as ig_Num, I.MEM_ID as wr_mem_Id, I.I_CONTENT as i_Content,
+                              C.C_NAME as c_Name,
+                              M.MEM_NAME as mem_Name,
+                              IG.IG_NAME as ig_Name
+                       from ISSUE I, CO_WORK C, MEMBER M, ISSUE_GROUP IG
+                       where C.C_ID=I.C_ID
+                       and M.MEM_ID=I.MEM_ID
+                       and I.IG_NUM = IG.IG_NUM
+                       
+                       and C.C_ID IN
+                          (
+                          select C_ID from CO_MEMBER where MEM_ID=#{mem_Id}
+                          )
+                        
+                       )
+                      union all
+                      (select P.P_NUM as i_Num, P.MEM_ID as c_Id, P.P_I_NAME as i_Name, P.P_I_DATE as i_Date, null as ig_Num, P.MEM_ID as wr_mem_Id, P.P_I_CONTENT as i_content,
+                              null as c_Name,
+                              M.MEM_NAME as mem_Name,
+                              null as ig_Name
+                          from PERSONAL P, MEMBER M
+                          where M.MEM_ID=P.MEM_ID
+                          and M.MEM_ID = #{mem_Id}
+                      )
+                  )
+      ]]>
+       <trim prefix="WHERE" prefixOverrides="AND|OR">
+				<if test="keyword != null and keyword != '' ">
+				 <![CDATA[
+				 	(REPLACE(upper( REGEXP_REPLACE( I_NAME,'<[^>]*>|\&([^;])*;', '') ),' ','')
+					|| REPLACE(upper(REGEXP_REPLACE( i_Content,'<[^>]*>|\&([^;])*;', '')),' ','')) 
+					like CONCAT('%' || REPLACE(upper(#{keyword}),' ',''), '%')
+					 ]]>
+				</if>
+				<if test="c_Id != null and c_Id != '' and c_Id != 'myspace' ">
+					AND c_Id = #{c_Id}
+				</if>
+				<if test="c_Id == 'myspace' ">
+					AND c_Id = #{mem_Id}
+				</if>
+				<if test="wr_mem_Id != null and wr_mem_Id != '' ">
+					AND wr_mem_Id = #{wr_mem_Id}
+				</if>
+				<if test="ig_Num != null and ig_Num != '' ">
+					AND ig_Num = #{ig_Num}
+				</if>
+		</trim>
+
+	</select>
+	
+	
+	<!-- 협업공간 별 이슈 작성자 필터링 -->
+	<select id="issueWriter" resultMap="issueResult" parameterType="project.euna.whole_search.vo.issueCriteria"> 
+      <![CDATA[
+	select distinct wr_mem_Id, mem_Name
+                  from
+                      (
+                      (select I.I_NUM as i_Num, I.C_ID as c_Id, I.I_NAME as i_Name, I.I_DATE as i_Date, I.IG_NUM as ig_Num, I.MEM_ID as wr_mem_Id, I.I_CONTENT as i_Content,
+                              C.C_NAME as c_Name,
+                              M.MEM_NAME as mem_Name,
+                              IG.IG_NAME as ig_Name
+                       from ISSUE I, CO_WORK C, MEMBER M, ISSUE_GROUP IG
+                       where C.C_ID=I.C_ID
+                       and M.MEM_ID=I.MEM_ID
+                       and I.IG_NUM = IG.IG_NUM
+                       
+                       and C.C_ID IN
+                          (
+                          select C_ID from CO_MEMBER where MEM_ID=#{mem_Id}
+                          )
+                        
+                       )
+                      union all
+                      (select P.P_NUM as i_Num, P.MEM_ID as c_Id, P.P_I_NAME as i_Name, P.P_I_DATE as i_Date, null as ig_Num, P.MEM_ID as wr_mem_Id, P.P_I_CONTENT as i_content,
+                              null as c_Name,
+                              M.MEM_NAME as mem_Name,
+                              null as ig_Name
+                          from PERSONAL P, MEMBER M
+                          where M.MEM_ID=P.MEM_ID
+                          and M.MEM_ID = #{mem_Id}
+                      )
+                  )
+                       ]]>
+       <trim prefix="WHERE" prefixOverrides="AND|OR">
+				<if test="keyword != null and keyword != '' ">
+				 <![CDATA[
+				 	(REPLACE(upper( REGEXP_REPLACE( I_NAME,'<[^>]*>|\&([^;])*;', '') ),' ','')
+					|| REPLACE(upper(REGEXP_REPLACE( i_Content,'<[^>]*>|\&([^;])*;', '')),' ','')) 
+					like CONCAT('%' || REPLACE(upper(#{keyword}),' ',''), '%')
+					 ]]>
+				</if>
+				<if test="c_Id != null and c_Id != '' and c_Id != 'myspace' ">
+					AND c_Id = #{c_Id}
+				</if>
+				<if test="c_Id == 'myspace' ">
+					AND c_Id = #{mem_Id}
+				</if>
+				<if test="wr_mem_Id != null and wr_mem_Id != '' ">
+					AND wr_mem_Id = #{wr_mem_Id}
+				</if>
+				<if test="ig_Num != null and ig_Num != '' ">
+					AND ig_Num = #{ig_Num}
+				</if>
+		</trim>
+	
+	</select>
+	
+	
+	
+	
+	
+<!-- 파일~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	
+	
+	
+		<!-- 파일 검색결과 -->
+		<select id="searchFile" resultMap="fileResult" parameterType="project.euna.whole_search.vo.fileCriteria"> 
+      <![CDATA[
+ 
+select a_File, a_Realname, a_NameEx, a_Num, a_Del, a_Size, i_Num, c_Id, i_Name, i_Date, wr_mem_Id, c_Name, mem_name, rnum, i_Content, ig_Num, ig_Name, ig_Color
+   from (         
+            select a_File, a_Realname, a_NameEx, a_Num, a_Del, a_Size, i_Num, c_Id, i_Name, i_Date, wr_mem_Id, i_Content, c_Name, mem_name, row_number() over(order by i_date desc) as rnum, ig_Num, ig_Name, ig_Color
+            from (
+                 (select a.a_File as a_File, a.a_Realname as a_Realname, a.a_NameEx as a_NameEx, a.a_Num as a_Num, a.a_Del as a_Del, a.a_Size as a_Size,
+                        i.i_Num as i_Num, i.c_Id as c_Id, i.I_Name as I_Name, i.I_Date as I_Date, i.mem_Id as wr_mem_Id, i.i_Content as i_Content, ig.ig_Num as ig_Num,
+                        c.c_Name as c_Name,
+                        m.mem_Name as mem_Name,
+                        ig.ig_Name as ig_Name, ig.ig_Color as ig_Color
+                 from appendix a, issue i, co_work c, member m, issue_group ig
+                 where i.i_Num = a.i_Num
+                 and c.c_id=i.c_id
+                 and m.mem_id=i.mem_id
+                 and i.ig_Num = ig.ig_Num
+                 and a.a_Del = 'N'
+                 and c.c_Id in
+                    (
+                    select c_id from co_member where mem_id=#{mem_Id}
+                    )
+                 )
+                union all
+                (select pa.p_a_File as a_File, pa.p_a_Realname as a_Realname, pa.p_a_NameEx as a_NameEx, pa.p_a_Num as a_Num, pa.p_a_Del as a_Del, pa.p_a_Size as a_Size,
+                        p.p_Num as i_Num, p.mem_Id as c_Id, p.p_i_Name as I_Name, p.p_i_Date as I_Date, p.mem_Id as wr_mem_Id, p.p_i_Content as i_Content, null as ig_Num,
+                        null as c_name,
+                        m.mem_name as mem_name,
+                        null as ig_Name, null as ig_Color
+                    from personal_appendix pa, personal p, member m
+                    where pa.p_Num = p.p_Num
+                    and m.mem_id=p.mem_id
+                    and pa.p_a_Del = 'N'
+                    and m.mem_id = #{mem_Id}
+                )
+            )
+           
+       ]]>
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+				<if test="keyword != null and keyword != '' ">
+				 <![CDATA[
+				 	(REPLACE(upper( REGEXP_REPLACE( I_NAME,'<[^>]*>|\&([^;])*;', '') ),' ','')
+					|| REPLACE(upper(REGEXP_REPLACE( i_Content,'<[^>]*>|\&([^;])*;', '')),' ','')
+					|| REPLACE(upper(REGEXP_REPLACE( a_Realname,'<[^>]*>|\&([^;])*;', '')),' ','')
+					) 
+					like CONCAT('%' || REPLACE(upper(#{keyword}),' ',''), '%')
+					 ]]>
+				</if>
+				<if test="c_Id != null and c_Id != '' and c_Id != 'myspace' ">
+					AND c_Id = #{c_Id}
+				</if>
+				<if test="c_Id == 'myspace' ">
+					AND c_Id = #{mem_Id}
+				</if>
+				<if test="wr_mem_Id != null and wr_mem_Id != '' ">
+					AND wr_mem_Id = #{wr_mem_Id}
+				</if>
+				<if test="a_NameEx != null and a_NameEx != '' ">
+					AND a_NameEx = #{a_NameEx}
+				</if>
+		</trim>
+     <![CDATA[
+     )
+    where rnum between #{rowStart} and #{rowEnd}
+     ]]>
+     	      	<choose>
+	      		<when test="order == 'asc'">
+	      			order by i_Date asc
+	      		</when>
+	      		<otherwise>
+	      			order by i_Date desc
+	      		</otherwise>
+	      	</choose>
+</select>
+	
+	
+	<!-- 파일 검색결과 총 갯수 -->
+	<select id="fileCount" resultType="int" parameterType="project.euna.whole_search.vo.fileCriteria"> 
+      <![CDATA[
+ select count(*)
+  from (
+            select a_File, a_Realname, a_NameEx, a_Num, a_Del, a_Size, i_Num, c_Id, i_Name, i_Date, wr_mem_Id, i_Content, c_Name, mem_name, row_number() over(order by i_date desc) as rnum, ig_Num, ig_Name
+            from (
+                 (select a.a_File as a_File, a.a_Realname as a_Realname, a.a_NameEx as a_NameEx, a.a_Num as a_Num, a.a_Del as a_Del, a.a_Size as a_Size,
+                        i.i_Num as i_Num, i.c_Id as c_Id, i.I_Name as I_Name, i.I_Date as I_Date, i.mem_Id as wr_mem_Id, i.i_Content as i_Content, ig.ig_Num as ig_Num,
+                        c.c_Name as c_Name,
+                        m.mem_Name as mem_Name,
+                        ig.ig_Name as ig_Name
+                 from appendix a, issue i, co_work c, member m, issue_group ig
+                 where i.i_Num = a.i_Num
+                 and c.c_id=i.c_id
+                 and m.mem_id=i.mem_id
+                 and i.ig_Num = ig.ig_Num
+                 and a.a_Del = 'N'
+                 and c.c_Id in
+                    (
+                    select c_id from co_member where mem_id=#{mem_Id}
+                    )
+                 )
+                union all
+                (select pa.p_a_File as a_File, pa.p_a_Realname as a_Realname, pa.p_a_NameEx as a_NameEx, pa.p_a_Num as a_Num, pa.p_a_Del as a_Del, pa.p_a_Size as a_Size,
+                        p.p_Num as i_Num, p.mem_Id as c_Id, p.p_i_Name as I_Name, p.p_i_Date as I_Date, p.mem_Id as wr_mem_Id, p.p_i_Content as i_Content, null as ig_Num,
+                        null as c_name,
+                        m.mem_name as mem_name,
+                        null as ig_Name
+                    from personal_appendix pa, personal p, member m
+                    where pa.p_Num = p.p_Num
+                    and m.mem_id=p.mem_id
+                    and pa.p_a_Del = 'N'
+                    and m.mem_id = #{mem_Id}
+                )
+            )
+            )
+          
+        ]]>
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+				<if test="keyword != null and keyword != '' ">
+				 <![CDATA[
+				 	(REPLACE(upper( REGEXP_REPLACE( I_NAME,'<[^>]*>|\&([^;])*;', '') ),' ','')
+					|| REPLACE(upper(REGEXP_REPLACE( i_Content,'<[^>]*>|\&([^;])*;', '')),' ','')
+					|| REPLACE(upper(REGEXP_REPLACE( a_Realname,'<[^>]*>|\&([^;])*;', '')),' ','')
+					) 
+					like CONCAT('%' || REPLACE(upper(#{keyword}),' ',''), '%')
+					 ]]>
+				</if>
+				<if test="c_Id != null and c_Id != '' and c_Id != 'myspace' ">
+					AND c_Id = #{c_Id}
+				</if>
+				<if test="c_Id == 'myspace' ">
+					AND c_Id = #{mem_Id}
+				</if>
+				<if test="wr_mem_Id != null and wr_mem_Id != '' ">
+					AND wr_mem_Id = #{wr_mem_Id}
+				</if>
+				<if test="a_NameEx != null and a_NameEx != '' ">
+					AND a_NameEx = #{a_NameEx}
+				</if>
+		</trim>
+	</select>
+	
+		<!-- 협업공간 별 파일 작성자 필터링 -->
+	<select id="fileWriter" resultMap="fileResult" parameterType="project.euna.whole_search.vo.fileCriteria"> 
+      <![CDATA[
+	select distinct wr_mem_Id, mem_Name
+                  from (
+                      (
+		               	select a.a_File as a_File, a.a_Realname as a_Realname, a.a_NameEx as a_NameEx, a.a_Num as a_Num, a.a_Del as a_Del, a.a_Size as a_Size,
+		                        i.i_Num as i_Num, i.c_Id as c_Id, i.I_Name as I_Name, i.I_Date as I_Date, i.mem_Id as wr_mem_Id, i.i_Content as i_Content, ig.ig_Num as ig_Num,
+		                        c.c_Name as c_Name,
+		                        m.mem_Name as mem_Name,
+		                        ig.ig_Name as ig_Name
+		                 from appendix a, issue i, co_work c, member m, issue_group ig
+		                 where i.i_Num = a.i_Num
+		                 and c.c_id=i.c_id
+		                 and m.mem_id=i.mem_id
+		                 and i.ig_Num = ig.ig_Num
+		                 and a.a_Del = 'N'
+		                 and c.c_Id in
+		                    (
+		                    select c_id from co_member where mem_id=#{mem_Id}
+		                    )
+		                 )
+		                union all
+		                (select pa.p_a_File as a_File, pa.p_a_Realname as a_Realname, pa.p_a_NameEx as a_NameEx, pa.p_a_Num as a_Num, pa.p_a_Del as a_Del, pa.p_a_Size as a_Size,
+		                        p.p_Num as i_Num, p.mem_Id as c_Id, p.p_i_Name as I_Name, p.p_i_Date as I_Date, p.mem_Id as wr_mem_Id, p.p_i_Content as i_Content, null as ig_Num,
+		                        null as c_name,
+		                        m.mem_name as mem_name,
+		                        null as ig_Name
+		                    from personal_appendix pa, personal p, member m
+		                    where pa.p_Num = p.p_Num
+		                    and m.mem_id=p.mem_id
+		                    and pa.p_a_Del = 'N'
+		                    and m.mem_id = #{mem_Id}
+		                )
+                 	 )
+                       ]]>
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+				<if test="keyword != null and keyword != '' ">
+				 <![CDATA[
+				 	(REPLACE(upper( REGEXP_REPLACE( I_NAME,'<[^>]*>|\&([^;])*;', '') ),' ','')
+					|| REPLACE(upper(REGEXP_REPLACE( i_Content,'<[^>]*>|\&([^;])*;', '')),' ','')
+					|| REPLACE(upper(REGEXP_REPLACE( a_Realname,'<[^>]*>|\&([^;])*;', '')),' ','')
+					) 
+					like CONCAT('%' || REPLACE(upper(#{keyword}),' ',''), '%')
+					 ]]>
+				</if>
+				<if test="c_Id != null and c_Id != '' and c_Id != 'myspace' ">
+					AND c_Id = #{c_Id}
+				</if>
+				<if test="c_Id == 'myspace' ">
+					AND c_Id = #{mem_Id}
+				</if>
+				<if test="wr_mem_Id != null and wr_mem_Id != '' ">
+					AND wr_mem_Id = #{wr_mem_Id}
+				</if>
+				<if test="a_NameEx != null and a_NameEx != '' ">
+					AND a_NameEx = #{a_NameEx}
+				</if>
+		</trim>
+	
+	</select>
+	
+	
+	
+			<!-- 파일 확장자 필터링 -->
+	<select id="fileEx" resultMap="fileResult" parameterType="project.euna.whole_search.vo.fileCriteria"> 
+      <![CDATA[
+	select distinct a_NameEx
+                  from (
+                      (
+		               	select a.a_File as a_File, a.a_Realname as a_Realname, a.a_NameEx as a_NameEx, a.a_Num as a_Num, a.a_Del as a_Del, a.a_Size as a_Size,
+		                        i.i_Num as i_Num, i.c_Id as c_Id, i.I_Name as I_Name, i.I_Date as I_Date, i.mem_Id as wr_mem_Id, i.i_Content as i_Content, ig.ig_Num as ig_Num,
+		                        c.c_Name as c_Name,
+		                        m.mem_Name as mem_Name,
+		                        ig.ig_Name as ig_Name
+		                 from appendix a, issue i, co_work c, member m, issue_group ig
+		                 where i.i_Num = a.i_Num
+		                 and c.c_id=i.c_id
+		                 and m.mem_id=i.mem_id
+		                 and i.ig_Num = ig.ig_Num
+		                 and a.a_Del = 'N'
+		                 and c.c_Id in
+		                    (
+		                    select c_id from co_member where mem_id=#{mem_Id}
+		                    )
+		                 )
+		                union all
+		                (select pa.p_a_File as a_File, pa.p_a_Realname as a_Realname, pa.p_a_NameEx as a_NameEx, pa.p_a_Num as a_Num, pa.p_a_Del as a_Del, pa.p_a_Size as a_Size,
+		                        p.p_Num as i_Num, p.mem_Id as c_Id, p.p_i_Name as I_Name, p.p_i_Date as I_Date, p.mem_Id as wr_mem_Id, p.p_i_Content as i_Content, null as ig_Num,
+		                        null as c_name,
+		                        m.mem_name as mem_name,
+		                        null as ig_Name
+		                    from personal_appendix pa, personal p, member m
+		                    where pa.p_Num = p.p_Num
+		                    and m.mem_id=p.mem_id
+		                    and pa.p_a_Del = 'N'
+		                    and m.mem_id = #{mem_Id}
+		                )
+                 	 )
+                       ]]>
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+				<if test="keyword != null and keyword != '' ">
+				 <![CDATA[
+				 	(REPLACE(upper( REGEXP_REPLACE( I_NAME,'<[^>]*>|\&([^;])*;', '') ),' ','')
+					|| REPLACE(upper(REGEXP_REPLACE( i_Content,'<[^>]*>|\&([^;])*;', '')),' ','')
+					|| REPLACE(upper(REGEXP_REPLACE( a_Realname,'<[^>]*>|\&([^;])*;', '')),' ','')
+					) 
+					like CONCAT('%' || REPLACE(upper(#{keyword}),' ',''), '%')
+					 ]]>
+				</if>
+				<if test="c_Id != null and c_Id != '' and c_Id != 'myspace' ">
+					AND c_Id = #{c_Id}
+				</if>
+				<if test="c_Id == 'myspace' ">
+					AND c_Id = #{mem_Id}
+				</if>
+				<if test="wr_mem_Id != null and wr_mem_Id != '' ">
+					AND wr_mem_Id = #{wr_mem_Id}
+				</if>
+				<if test="a_NameEx != null and a_NameEx != '' ">
+					AND a_NameEx = #{a_NameEx}
+				</if>
+		</trim>
+	
+	</select>
+	
+	
+	
+	
+	
+<!-- 투표~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	
+	
+			<!-- 투표 검색결과 -->
+		<select id="searchVote" resultMap="voteResult" parameterType="project.euna.whole_search.vo.voteCriteria"> 
+      <![CDATA[
+ 
+select c_Id, v_Num, v_Content, wr_mem_Id, v_Date, v_Name, vs_Num, v_Subject, mem_Name, rnum, c_Name, vs_Color, vs_Name
+from(
+	select c_Id, v_Num, v_Content, wr_mem_Id, v_Date, v_Name, vs_Num, v_Subject, mem_Name, c_Name,row_number() over(order by v_Date desc) as rnum, vs_Color, vs_Name
+	from
+	(
+        select v.c_Id as c_Id, v.v_Num as v_Num, v.v_Content as v_Content, v.mem_Id as wr_mem_Id, v.v_Date as v_Date, v.v_Name as v_Name, v.vs_Num as vs_Num, v.v_Subject as v_Subject, v.mem_Name as mem_Name,
+                c.c_Name as c_Name, vs.vs_Color as vs_Color, vs.vs_Name as vs_Name
+        from vote v, co_work c, vote_Status vs
+        where v.c_Id=c.c_Id
+        and v.vs_Num = vs.vs_Num
+        and c.c_Id in
+            (
+            select c_id from co_member where mem_id=#{mem_Id}
+            )
+       )
+       ]]>
+               <trim prefix="WHERE" prefixOverrides="AND|OR">
+				<if test="keyword != null and keyword != '' ">
+				 <![CDATA[
+				 	(REPLACE(upper( REGEXP_REPLACE( v_Name,'<[^>]*>|\&([^;])*;', '') ),' ','')
+					|| REPLACE(upper(REGEXP_REPLACE( v_Content,'<[^>]*>|\&([^;])*;', '')),' ','')
+					|| REPLACE(upper(REGEXP_REPLACE( v_subject,'<[^>]*>|\&([^;])*;', '')),' ','')
+					) 
+					like CONCAT('%' || REPLACE(upper(#{keyword}),' ',''), '%')
+					 ]]>
+				</if>
+				<if test="c_Id != null and c_Id != '' and c_Id != 'myspace' ">
+					AND c_Id = #{c_Id}
+				</if>
+				<if test="c_Id == 'myspace' ">
+					AND c_Id = #{mem_Id}
+				</if>
+				<if test="wr_mem_Id != null and wr_mem_Id != '' ">
+					AND wr_mem_Id = #{wr_mem_Id}
+				</if>
+				<if test="vs_Num != null and vs_Num != '' ">
+					AND vs_Num = #{vs_Num}
+				</if>
+		</trim>
+
+     <![CDATA[
+    )
+    where rnum between #{rowStart} and #{rowEnd}
+     ]]>
+          	      	<choose>
+	      		<when test="order == 'asc'">
+	      			order by v_Date asc
+	      		</when>
+	      		<otherwise>
+	      			order by v_Date desc
+	      		</otherwise>
+	      	</choose>
+</select>
+	
+	
+	
+		<!-- 투표 검색결과 총 갯수 -->
+	<select id="voteCount" resultType="int" parameterType="project.euna.whole_search.vo.voteCriteria"> 
+      <![CDATA[
+select count(*)
+from(
+	select c_Id, v_Num, v_Content, wr_mem_Id, v_Date, v_Name, vs_Num, v_Subject, mem_Name, c_Name,row_number() over(order by v_Date desc) as rnum
+	from
+	(
+        select v.c_Id as c_Id, v.v_Num as v_Num, v.v_Content as v_Content, v.mem_Id as wr_mem_Id, v.v_Date as v_Date, v.v_Name as v_Name, v.vs_Num as vs_Num, v.v_Subject as v_Subject, v.mem_Name as mem_Name,
+                c.c_Name as c_Name
+        from vote v, co_work c
+        where v.c_Id=c.c_Id
+        and c.c_Id in
+            (
+            select c_id from co_member where mem_id=#{mem_Id}
+            )
+       )
+         
+          
+        ]]>
+                <trim prefix="WHERE" prefixOverrides="AND|OR">
+				<if test="keyword != null and keyword != '' ">
+				 <![CDATA[
+				 	(REPLACE(upper( REGEXP_REPLACE( v_Name,'<[^>]*>|\&([^;])*;', '') ),' ','')
+					|| REPLACE(upper(REGEXP_REPLACE( v_Content,'<[^>]*>|\&([^;])*;', '')),' ','')
+					|| REPLACE(upper(REGEXP_REPLACE( v_subject,'<[^>]*>|\&([^;])*;', '')),' ','')
+					) 
+					like CONCAT('%' || REPLACE(upper(#{keyword}),' ',''), '%')
+					 ]]>
+				</if>
+				<if test="c_Id != null and c_Id != '' and c_Id != 'myspace' ">
+					AND c_Id = #{c_Id}
+				</if>
+				<if test="c_Id == 'myspace' ">
+					AND c_Id = #{mem_Id}
+				</if>
+				<if test="wr_mem_Id != null and wr_mem_Id != '' ">
+					AND wr_mem_Id = #{wr_mem_Id}
+				</if>
+				<if test="vs_Num != null and vs_Num != '' ">
+					AND vs_Num = #{vs_Num}
+				</if>
+		</trim>
+ <![CDATA[ ) ]]>
+
+	</select>
+	
+	
+			<!-- 협업공간 별 투표 작성자 필터링 -->
+	<select id="voteWriter" resultMap="voteResult" parameterType="project.euna.whole_search.vo.voteCriteria"> 
+      <![CDATA[
+	select distinct wr_mem_Id, mem_Name
+                  from (
+			         select v.c_Id as c_Id, v.v_Num as v_Num, v.v_Content as v_Content, v.mem_Id as wr_mem_Id, v.v_Date as v_Date, v.v_Name as v_Name, v.vs_Num as vs_Num, v.v_Subject as v_Subject, v.mem_Name as mem_Name, row_number() over(order by v_Date desc) as rnum,
+			                c.c_Name as c_Name
+			        from vote v, co_work c
+			        where v.c_Id=c.c_Id
+			        and c.c_Id in
+			            (
+			            select c_id from co_member where mem_id=#{mem_Id}
+			            )
+                 	 )
+                       ]]>
+               <trim prefix="WHERE" prefixOverrides="AND|OR">
+				<if test="keyword != null and keyword != '' ">
+				 <![CDATA[
+				 	(REPLACE(upper( REGEXP_REPLACE( v_Name,'<[^>]*>|\&([^;])*;', '') ),' ','')
+					|| REPLACE(upper(REGEXP_REPLACE( v_Content,'<[^>]*>|\&([^;])*;', '')),' ','')
+					|| REPLACE(upper(REGEXP_REPLACE( v_subject,'<[^>]*>|\&([^;])*;', '')),' ','')
+					) 
+					like CONCAT('%' || REPLACE(upper(#{keyword}),' ',''), '%')
+					 ]]>
+				</if>
+				<if test="c_Id != null and c_Id != '' and c_Id != 'myspace' ">
+					AND c_Id = #{c_Id}
+				</if>
+				<if test="c_Id == 'myspace' ">
+					AND c_Id = #{mem_Id}
+				</if>
+				<if test="wr_mem_Id != null and wr_mem_Id != '' ">
+					AND wr_mem_Id = #{wr_mem_Id}
+				</if>
+				<if test="vs_Num != null and vs_Num != '' ">
+					AND vs_Num = #{vs_Num}
+				</if>
+		</trim>
+	
+	</select>
+	
+	
+	
+	
+<!-- 댓글~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+	
+		<!-- 댓글검색 뷰 -->
+	<select id="searchReply" resultMap="replyResult" parameterType="project.euna.whole_search.vo.replyCriteria"> 
+      <![CDATA[
+ 
+          select r_Num, r_Content, r_Date, i_Num, c_Id, wr_mem_Id, mem_Name, c_Name, i_Name,rnum, ig_Num, ig_Name,ig_Color
+      from(
+        select r_Num, r_Content, r_Date, i_Num, c_Id, wr_mem_Id, mem_Name, c_Name, i_Name, row_number() over(order by r_date desc) as rnum, ig_Num, ig_Name, ig_Color
+        from(
+            select r.r_Num as r_Num, r.r_Content as r_Content, r.r_Date as r_Date, r.i_Num as i_Num, r.c_Id as c_Id, r. mem_Id as wr_mem_Id,
+            m.mem_Name as mem_Name,
+            c.c_Name as c_Name,
+            i.i_Name as i_Name, i.ig_Num as ig_Num,
+            ig.ig_Name as ig_Name, ig.ig_Color as ig_Color
+            
+            from reply r, member m, co_work c, issue i, issue_group ig
+            
+            where r.mem_Id = m.mem_Id
+            and r.c_Id = c.c_Id
+            and r.i_Num = i.i_Num
+            and ig.ig_Num = i.ig_Num
+            and c.c_Id IN
+                (
+                 select c_Id from CO_MEMBER where mem_Id=#{mem_Id}
+                  )
+            
+            union all
+            select r.vr_Num as r_Num, r.vr_Content as r_Content, r.vr_Date as r_Date, r.v_Num as i_Num, r.c_Id as c_Id, r. mem_Id as wr_mem_Id,
+            m.mem_Name as mem_Name,
+            c.c_Name as c_Name,
+            v.v_Name as i_Name, v.vs_Num as ig_Num,
+            vs.vs_Name as ig_Name, vs.vs_Color as ig_Color
+            
+            from vote_reply r, member m, co_work c, vote v, vote_status vs
+            
+            where r.mem_Id = m.mem_Id
+            and r.c_Id = c.c_Id
+            and r.v_Num = v.v_Num
+            and v.vs_Num = vs.vs_Num
+            and c.c_Id IN
+                (
+                 select c_Id from CO_MEMBER where mem_Id=#{mem_Id}
+                  )
+            
+            union all
+            select pm.p_m_Num as r_Num, pm.p_m_Content as r_Content, pm.p_m_Date as r_Date, pm.p_Num as i_Num, pm.mem_Id as c_Id, pm.mem_Id as wr_mem_Id,
+            m.mem_Name as mem_Name,
+            null as c_Name,
+            p.p_i_Name as i_Name,  null as ig_Num,
+           	null as ig_Name, null as ig_Color
+            
+            from personal_memo pm, member m, personal p
+            
+            where pm.mem_Id=m.mem_Id
+            and pm.p_Num=p.p_Num
+            and m.mem_Id = #{mem_Id}
+            )
+
+	 ]]>
+               <trim prefix="WHERE" prefixOverrides="AND|OR">
+				<if test="keyword != null and keyword != '' ">
+				 <![CDATA[
+				 	(REPLACE(upper( REGEXP_REPLACE(r_Content,'<[^>]*>|\&([^;])*;', '') ),' ','')) 
+					like CONCAT('%' || REPLACE(upper(#{keyword}),' ',''), '%')
+					 ]]>
+				</if>
+				<if test="c_Id != null and c_Id != '' and c_Id != 'myspace' ">
+					AND c_Id = #{c_Id}
+				</if>
+				<if test="c_Id == 'myspace' ">
+					AND c_Id = #{mem_Id}
+				</if>
+				<if test="wr_mem_Id != null and wr_mem_Id != '' ">
+					AND wr_mem_Id = #{wr_mem_Id}
+				</if>
+		</trim>
+              
+     <![CDATA[
+     )
+    where rnum between #{rowStart} and #{rowEnd}
+     ]]>
+             <choose>
+	      		<when test="order == 'asc'">
+	      			order by r_Date asc
+	      		</when>
+	      		<otherwise>
+	      			order by r_Date desc
+	      		</otherwise>
+	      	</choose>
+	</select>
+	
+	
+	
+		<!-- 댓글 검색결과 총 갯수 -->
+	<select id="replyCount" resultType="int" parameterType="project.euna.whole_search.vo.replyCriteria"> 
+	      <![CDATA[
+     select count(*)
+      from(
+        select r_Num, r_Content, r_Date, i_Num, c_Id, wr_mem_Id, mem_Name, c_Name, i_Name, row_number() over(order by r_date desc) as rnum, ig_Num, ig_Name, ig_Color
+        from(
+            select r.r_Num as r_Num, r.r_Content as r_Content, r.r_Date as r_Date, r.i_Num as i_Num, r.c_Id as c_Id, r. mem_Id as wr_mem_Id,
+            m.mem_Name as mem_Name,
+            c.c_Name as c_Name,
+            i.i_Name as i_Name, i.ig_Num as ig_Num,
+            ig.ig_Name as ig_Name, ig.ig_Color as ig_Color
+            
+            from reply r, member m, co_work c, issue i, issue_group ig
+            
+            where r.mem_Id = m.mem_Id
+            and r.c_Id = c.c_Id
+            and r.i_Num = i.i_Num
+            and ig.ig_Num = i.ig_Num
+            and c.c_Id IN
+                (
+                 select c_Id from CO_MEMBER where mem_Id=#{mem_Id}
+                  )
+            
+            union all
+            select r.vr_Num as r_Num, r.vr_Content as r_Content, r.vr_Date as r_Date, r.v_Num as i_Num, r.c_Id as c_Id, r. mem_Id as wr_mem_Id,
+            m.mem_Name as mem_Name,
+            c.c_Name as c_Name,
+            v.v_Name as i_Name, v.vs_Num as ig_Num,
+            vs.vs_Name as ig_Name, vs.vs_Color as ig_Color
+            
+            from vote_reply r, member m, co_work c, vote v, vote_status vs
+            
+            where r.mem_Id = m.mem_Id
+            and r.c_Id = c.c_Id
+            and r.v_Num = v.v_Num
+            and v.vs_Num = vs.vs_Num
+            and c.c_Id IN
+                (
+                 select c_Id from CO_MEMBER where mem_Id=#{mem_Id}
+                  )
+            
+            union all
+            select pm.p_m_Num as r_Num, pm.p_m_Content as r_Content, pm.p_m_Date as r_Date, pm.p_Num as i_Num, pm.mem_Id as c_Id, pm.mem_Id as wr_mem_Id,
+            m.mem_Name as mem_Name,
+            null as c_Name,
+            p.p_i_Name as i_Name,  null as ig_Num,
+           	null as ig_Name, null as ig_Color
+            
+            from personal_memo pm, member m, personal p
+            
+            where pm.mem_Id=m.mem_Id
+            and pm.p_Num=p.p_Num
+            and m.mem_Id = #{mem_Id}
+            )
+            )
+                       ]]>
+               <trim prefix="WHERE" prefixOverrides="AND|OR">
+				<if test="keyword != null and keyword != '' ">
+				 <![CDATA[
+				 	(REPLACE(upper( REGEXP_REPLACE( r_Content,'<[^>]*>|\&([^;])*;', '') ),' ','')) 
+					like CONCAT('%' || REPLACE(upper(#{keyword}),' ',''), '%')
+					 ]]>
+				</if>
+				<if test="c_Id != null and c_Id != '' and c_Id != 'myspace' ">
+					AND c_Id = #{c_Id}
+				</if>
+				<if test="c_Id == 'myspace' ">
+					AND c_Id = #{mem_Id}
+				</if>
+				<if test="wr_mem_Id != null and wr_mem_Id != '' ">
+					AND wr_mem_Id = #{wr_mem_Id}
+				</if>
+		</trim>
+
+	</select>
+	
+	
+				<!-- 협업공간 별 댓글 작성자 필터링 -->
+	<select id="replyWriter" resultMap="replyResult" parameterType="project.euna.whole_search.vo.replyCriteria"> 
+      <![CDATA[
+         select distinct wr_mem_Id, mem_Name
+      from(
+        select r_Num, r_Content, r_Date, i_Num, c_Id, wr_mem_Id, mem_Name, c_Name, i_Name, row_number() over(order by r_date desc) as rnum, ig_Num, ig_Name, ig_Color
+        from(
+            select r.r_Num as r_Num, r.r_Content as r_Content, r.r_Date as r_Date, r.i_Num as i_Num, r.c_Id as c_Id, r. mem_Id as wr_mem_Id,
+            m.mem_Name as mem_Name,
+            c.c_Name as c_Name,
+            i.i_Name as i_Name, i.ig_Num as ig_Num,
+            ig.ig_Name as ig_Name, ig.ig_Color as ig_Color
+            
+            from reply r, member m, co_work c, issue i, issue_group ig
+            
+            where r.mem_Id = m.mem_Id
+            and r.c_Id = c.c_Id
+            and r.i_Num = i.i_Num
+            and ig.ig_Num = i.ig_Num
+            and c.c_Id IN
+                (
+                 select c_Id from CO_MEMBER where mem_Id=#{mem_Id}
+                  )
+            
+            union all
+            select r.vr_Num as r_Num, r.vr_Content as r_Content, r.vr_Date as r_Date, r.v_Num as i_Num, r.c_Id as c_Id, r. mem_Id as wr_mem_Id,
+            m.mem_Name as mem_Name,
+            c.c_Name as c_Name,
+            v.v_Name as i_Name, v.vs_Num as ig_Num,
+            vs.vs_Name as ig_Name, vs.vs_Color as ig_Color
+            
+            from vote_reply r, member m, co_work c, vote v, vote_status vs
+            
+            where r.mem_Id = m.mem_Id
+            and r.c_Id = c.c_Id
+            and r.v_Num = v.v_Num
+            and v.vs_Num = vs.vs_Num
+            and c.c_Id IN
+                (
+                 select c_Id from CO_MEMBER where mem_Id=#{mem_Id}
+                  )
+            
+            union all
+            select pm.p_m_Num as r_Num, pm.p_m_Content as r_Content, pm.p_m_Date as r_Date, pm.p_Num as i_Num, pm.mem_Id as c_Id, pm.mem_Id as wr_mem_Id,
+            m.mem_Name as mem_Name,
+            null as c_Name,
+            p.p_i_Name as i_Name,  null as ig_Num,
+           	null as ig_Name, null as ig_Color
+            
+            from personal_memo pm, member m, personal p
+            
+            where pm.mem_Id=m.mem_Id
+            and pm.p_Num=p.p_Num
+            and m.mem_Id = #{mem_Id}
+            )
+            )
+                       ]]>
+               <trim prefix="WHERE" prefixOverrides="AND|OR">
+				<if test="keyword != null and keyword != '' ">
+				 <![CDATA[
+				 	(REPLACE(upper( REGEXP_REPLACE( r_Content,'<[^>]*>|\&([^;])*;', '') ),' ','')) 
+					like CONCAT('%' || REPLACE(upper(#{keyword}),' ',''), '%')
+					 ]]>
+				</if>
+				<if test="c_Id != null and c_Id != '' and c_Id != 'myspace' ">
+					AND c_Id = #{c_Id}
+				</if>
+				<if test="c_Id == 'myspace' ">
+					AND c_Id = #{mem_Id}
+				</if>
+				<if test="wr_mem_Id != null and wr_mem_Id != '' ">
+					AND wr_mem_Id = #{wr_mem_Id}
+				</if>
+		</trim>
+	
+	</select>
+	
+
+	
+	
+</mapper>

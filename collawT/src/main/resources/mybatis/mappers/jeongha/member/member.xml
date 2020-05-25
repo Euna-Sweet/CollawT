@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="member">
+	<resultMap id="memberResult01" type="java.util.HashMap">
+		<result property="mem_Id" column="mem_Id" />
+		<result property="mem_Pwd" column="mem_Pwd" />
+		<result property="mem_Name" column="mem_Name" />
+		<result property="mem_ImgName" column="mem_ImgName" />
+		<result property="mem_File" column="mem_File" javaType="[B"
+			jdbcType="BLOB" />
+		<result property="mem_Key" column="mem_Key" />
+		<result property="mem_Kind" column="mem_Kind" />
+		<result property="mem_LoginApi" column="mem_LoginApi" />
+		<!-- <result property="forgot_Key" column="mem_Imagname" /> -->
+	</resultMap>
+
+	<!-- 이메일 인증 -->
+	<update id="approvalMember" parameterType="memberVO">
+	<![CDATA[
+		update member set mem_status = 'true' where mem_Id = #{mem_Id} and
+		mem_Key = #{mem_Key}
+		]]>
+	</update>
+
+
+	<!-- 회원정보 수정 -->
+	<update id="updateMypage" parameterType="java.util.Map">
+	<![CDATA[
+		update member set mem_Name = #{mem_Name} where mem_Id =#{mem_Id}
+		]]>
+	</update>
+
+	<!-- 아이디 중복 검사 -->
+	<select id="checkId" parameterType="String" resultType="int">
+		<![CDATA[
+		select count(*) from member where mem_Id = #{mem_Id}
+		]]>
+	</select>
+
+	<select id="checkIdMap" parameterType="java.util.Map"
+		resultType="int">
+		<![CDATA[
+		select count(*) from member where mem_Id = #{mem_Id}
+		]]>
+	</select>
+
+	<!-- 회원가입 상태 체크 -->
+	<select id="checkMemStatus" parameterType="java.util.Map"
+		resultType="memberVO">
+		<![CDATA[
+		select mem_status from member where mem_Id = #{mem_Id}
+		]]>
+	</select>
+
+
+	<!-- 회원정보 수정 -->
+	<update id="updateMember" parameterType="java.util.Map">
+		<![CDATA[
+			update member
+			set mem_Pwd=#{mem_Pwd}, mem_Name=#{mem_Name}
+			where mem_Id=#{mem_Id} 
+		]]>
+
+	</update>
+	<!--프로필 사진 -->
+	<update id="saveImage" parameterType="java.util.Map">
+		<![CDATA[
+		update member
+		set mem_File=#{mem_File}
+		where mem_id =#{mem_Id}
+		]]>
+	</update>
+
+	<!-- 테스트용도 -->
+	<select id="logina" parameterType="String" resultType="memberVO">
+	<![CDATA[
+		select mem_id, mem_file, mem_loginapi, mem_name, mem_joindate, mem_kind from member where mem_Id = #{mem_Id}
+		]]>
+	</select>
+
+	<!-- 비밀번호 수정 -->
+	<select id="loginb" parameterType="java.util.Map"
+		resultType="memberVO">
+	<![CDATA[
+		select mem_id, mem_file, mem_loginapi, mem_name, mem_joindate, mem_kind from member where mem_Id = #{mem_Id}
+		]]>
+	</select>
+
+	<!--로그인 -->
+	<select id="login" resultMap="memberResult01"
+		parameterType="java.util.Map">
+	<![CDATA[
+		select mem_id,mem_pwd, mem_file, mem_loginapi, mem_name, mem_joindate, mem_kind 
+		from member
+		where mem_Id = #{mem_Id}
+	]]>
+
+	</select>
+
+
+	<select id="searchList" resultMap="memberResult01"
+		parameterType="java.util.Map"> 
+      <![CDATA[
+         select mem_Id, mem_Pwd, mem_Name
+         from   test_member
+      ]]>
+		<where>
+			<if test="mem_Id != ''  and  mem_Id != null">
+			<![CDATA[
+				id = #{mem_Id}
+				]]>
+			</if>
+		</where>
+	</select>
+
+	<!-- 회원가입 -->
+	<insert id="memberJoin" parameterType="java.util.Map">
+	<![CDATA[
+		insert into member(mem_id, mem_pwd, mem_name, mem_joindate, mem_kind, mem_key, mem_status )
+		values(#{mem_Id}, #{mem_Pwd}, #{mem_Name}, to_char(sysdate,'yyyy/mm/dd'), '00', #{mem_Key}, 'false' )
+		]]>
+	</insert>
+
+	<insert id="memberJoinApiNaver" parameterType="java.util.Map">
+		<![CDATA[
+		insert into member(mem_id, mem_name, mem_imgname, mem_joindate, mem_kind, mem_loginapi, mem_status)
+		values(#{mem_Id}, #{mem_Name}, #{mem_ImgName}, to_char(sysdate,'yyyy/mm/dd'), '00', #{mem_LoginApi}, 'true')
+		]]>
+	</insert>
+
+	<insert id="memberJoinApiGoogle" parameterType="java.util.Map">
+		<![CDATA[
+		insert into member(mem_id, mem_name, mem_joindate, mem_kind, mem_loginapi, mem_status)
+		values(#{mem_Id}, #{mem_Id}, to_char(sysdate,'yyyy/mm/dd'), '00',  #{mem_LoginApi}, 'true')
+		]]>
+	</insert>
+
+	<!-- 비밀번호 변경 -->
+	<update id="update_pw" parameterType="memberVO">
+	<![CDATA[
+		update member set mem_pwd = #{mem_Pwd} where mem_id = #{mem_Id}
+		]]>
+	</update>
+
+	<!-- naver로그인시 불러올 네이버 사진 업데이트 정보 -->
+	<update id="memberLoginNaver" parameterType="java.util.Map">
+	<![CDATA[
+		update member set mem_imgname = #{mem_ImgName} where mem_id =#{mem_Id}
+	]]>
+
+
+	</update>
+
+
+	<!-- 회원탈퇴 -->
+	<delete id="delete_member" parameterType="memberVO">
+	<![CDATA[
+		delete from member where mem_id =#{mem_Id}
+		]]>
+	</delete>
+	<!-- 사진불러오기 -->
+	<select id="getByteImage" resultMap="memberResult01"
+		parameterType="String">
+	<![CDATA[
+		SELECT mem_File
+		FROM member
+		where mem_Id = #{mem_Id}
+	 ]]>
+	</select>
+
+</mapper>

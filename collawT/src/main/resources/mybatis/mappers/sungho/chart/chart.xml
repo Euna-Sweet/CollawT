@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="chart">
+	<resultMap id="chartResult01" type="java.util.Map">
+		<result property="mem_Count" column="mem_Count" />
+		<result property="mem_Joindate" column="mem_Joindate" />
+		<result property="dayitem" column="dayitem" />
+		<result property="cnt" column="cnt" />
+	</resultMap>
+	
+	<resultMap id="lineResult01" type="java.util.Map">
+		<result property="dayitem" column="dayitem" />
+		<result property="cnt" column="cnt" />
+	</resultMap>
+
+	<select id="searchList" resultMap="chartResult01"
+		parameterType="java.util.Map"> 
+      <![CDATA[
+         SELECT dayitem,
+       NVL((
+        SELECT mem_Count
+        FROM
+        (
+        select count(*) as mem_Count, mem_Joindate
+        from member
+        where mem_Joindate BETWEEN  to_char(sysdate-6, 'yyyy/mm/dd')   AND  to_char(sysdate, 'yyyy/mm/dd')
+        GROUP BY mem_Joindate
+        )
+        WHERE mem_Joindate = A.dayitem
+       ),0) AS CNT
+	FROM(
+    SELECT to_char(sysdate-6,'yyyy/mm/dd') AS dayitem FROM dual UNION all
+    		SELECT to_char(sysdate-5,'yyyy/mm/dd') AS dayitem FROM dual UNION all
+   		 	SELECT to_char(sysdate-4,'yyyy/mm/dd') AS dayitem FROM dual UNION all
+   			SELECT to_char(sysdate-3,'yyyy/mm/dd') AS dayitem FROM dual UNION all
+    		SELECT to_char(sysdate-2,'yyyy/mm/dd') AS dayitem FROM dual UNION all
+    		SELECT to_char(sysdate-1,'yyyy/mm/dd') AS dayitem FROM dual UNION all
+    		SELECT to_char(sysdate,'yyyy/mm/dd') AS dayitem FROM dual  
+	) A
+      ]]>
+	</select>
+	<select id="memCount" resultType="int">
+      <![CDATA[
+         select count(*) from member
+      ]]>
+	</select>
+	
+
+	<select id="donutList" resultMap="chartResult01" parameterType="java.util.Map">
+      <![CDATA[
+        select count(*) as cnt, c_category
+		from co_work group by c_category
+		order by c_category asc
+      ]]>
+	</select>
+	
+	
+	<select id="lineList" resultMap="lineResult01" parameterType="java.util.Map">
+      <![CDATA[
+        SELECT dayitem, 
+ 		 	NVL((
+  			SELECT cnt 
+  			FROM(
+    			SELECT  count(*) as cnt ,substr(i_date,1,10) as day
+    			FROM issue
+   		 		WHERE substr(i_date,1,10) BETWEEN  to_char(sysdate-6,'yyyy/mm/dd')   AND  to_char(sysdate,'yyyy/mm/dd')
+    			GROUP BY substr(i_date,1,10) )
+    		WHERE day = A.dayitem ),0) AS CNT
+		FROM(
+    		SELECT to_char(sysdate-6,'yyyy/mm/dd') AS dayitem FROM dual UNION all
+    		SELECT to_char(sysdate-5,'yyyy/mm/dd') AS dayitem FROM dual UNION all
+   		 	SELECT to_char(sysdate-4,'yyyy/mm/dd') AS dayitem FROM dual UNION all
+   			SELECT to_char(sysdate-3,'yyyy/mm/dd') AS dayitem FROM dual UNION all
+    		SELECT to_char(sysdate-2,'yyyy/mm/dd') AS dayitem FROM dual UNION all
+    		SELECT to_char(sysdate-1,'yyyy/mm/dd') AS dayitem FROM dual UNION all
+    		SELECT to_char(sysdate,'yyyy/mm/dd') AS dayitem FROM dual  
+			) A
+      ]]>
+	</select>
+	
+</mapper>

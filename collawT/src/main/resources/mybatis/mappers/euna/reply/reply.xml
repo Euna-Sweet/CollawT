@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="reply">
+	<resultMap id="replyResult01" type="ReplyVO">
+		<!-- property는 화면단에서 쓸 이름, column은 데이터컬럼명이랑 동일 -->
+		<result property="i_Num" column="i_Num" />
+		<result property="r_Num" column="r_Num" />
+		<result property="r_Content" column="r_Content" />
+		<result property="r_Date" column="r_Date" />
+		<result property="mem_Id" column="mem_Id" />
+		<result property="c_Id" column="c_Id" />
+	</resultMap>
+	
+	<resultMap id="replyResult02" type="java.util.HashMap">
+		<!-- property는 화면단에서 쓸 이름, column은 데이터컬럼명이랑 동일 -->
+		<result property="r_Num" column="r_Num" />
+		<result property="r_Content" column="r_Content" jdbcType="CLOB" javaType="java.lang.String"/>
+		<result property="r_Date" column="r_Date" />
+		<result property="i_Num" column="i_Num" />
+		<result property="c_Id" column="c_Id" />
+		<result property="mem_Id" column="mem_Id" />
+		<result property="mem_Name" column="mem_Name" />
+		<result property="mem_File" column="mem_File" javaType="[B" jdbcType="BLOB"/>
+		
+	</resultMap>
+
+	
+
+	<!-- 댓글 목록 -->
+	<select id="searchList" resultMap="replyResult02"> 
+      <![CDATA[
+        select R.r_Num, R.r_Content, R.r_Date, R.i_Num, R.c_Id, R.mem_Id, M.mem_Name, M.mem_File
+		from reply R, member M
+		where M.mem_Id=R.mem_Id
+		and i_Num = #{i_Num}
+		order by r_Num asc
+      ]]>
+
+	</select>
+	
+
+	<!-- 댓글 입력 -->
+	<insert id="replyInsert" parameterType="ReplyVO">
+	<selectKey resultType="string" keyProperty="r_Num" order="BEFORE">
+        SELECT reply_r_num.nextval as r_Num FROM dual        
+    </selectKey>  
+		insert into reply(r_Num, r_Content, r_Date, i_Num, c_Id, mem_Id)
+		values(#{r_Num}, #{r_Content}, (select to_char(sysdate, 'YYYY/MM/DD/ HH24:MI:SS') from dual), #{i_Num} , #{c_Id} , #{mem_Id})
+	</insert>
+
+
+
+	<!-- 댓글 삭제 -->
+	<delete id="replyDelete" parameterType="String">
+		DELETE
+		FROM reply
+		WHERE r_Num=#{r_Num}
+	</delete>
+	
+
+	
+	<!-- 댓글 수정-->
+	<update id="replyUpdate" parameterType="project.euna.reply.vo.ReplyVO">
+		UPDATE reply
+		SET r_Content = #{r_Content}, r_Date=(select to_char(sysdate, 'YYYY/MM/DD/ HH24:MI:SS') from dual)
+		WHERE r_Num=#{r_Num}
+	</update>
+
+</mapper>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="personal_memo">
+	<resultMap id="personal_memoResult01" type="personal_memoVO">
+		<!-- property는 화면단에서 쓸 이름, column은 데이터컬럼명이랑 동일 -->
+		<result property="p_Num" column="p_Num" />
+		<result property="p_m_Num" column="p_m_Num" />
+		<result property="p_m_Content" column="p_m_Content" jdbcType="CLOB" javaType="java.lang.String"/>
+		<result property="p_m_Date" column="p_m_Date" />
+		<result property="mem_Id" column="mem_Id" />
+	</resultMap>
+	
+	<resultMap id="personal_memoResult02" type="java.util.HashMap">
+		<!-- property는 화면단에서 쓸 이름, column은 데이터컬럼명이랑 동일 -->
+		<result property="p_Num" column="p_Num" />
+		<result property="p_m_Num" column="p_m_Num" />
+		<result property="p_m_Content" column="p_m_Content" jdbcType="CLOB" javaType="java.lang.String"/>
+		<result property="p_m_Date" column="p_m_Date" />
+		<result property="mem_Id" column="mem_Id" />
+		<result property="mem_Name" column="mem_Name" />
+	</resultMap>
+
+	
+
+	<!-- 댓글 목록 -->
+	<select id="searchList" resultMap="personal_memoResult02"> 
+      <![CDATA[
+        select pm.p_m_Num, pm.p_m_Content, pm.p_m_Date, pm.p_Num, pm.mem_Id, m.mem_Name
+		from personal_memo pm, member m
+		where pm.mem_Id=m.mem_Id 
+		and p_Num = #{p_Num}
+		order by p_m_Num asc
+      ]]>
+
+	</select>
+	
+
+	<!-- 댓글 입력 -->
+	<insert id="personal_memoInsert" parameterType="personal_memoVO">
+		insert into personal_memo(p_m_Num, p_m_Content, p_m_Date, p_Num, mem_Id)
+		values(personal_seq.nextval, #{p_m_Content}, (select to_char(sysdate, 'YYYY/MM/DD/ HH24:MI:SS') from dual), #{p_Num}, #{mem_Id})
+	</insert>
+
+
+
+	<!-- 댓글 삭제 -->
+	<delete id="personal_memoDelete" parameterType="String">
+		DELETE
+		FROM personal_memo
+		WHERE p_m_Num=#{p_m_Num}
+	</delete>
+	
+
+	
+	<!-- 댓글 수정-->
+	<update id="personal_memoUpdate" parameterType="project.euna.personal.vo.Personal_memoVO">
+		UPDATE personal_memo
+		SET p_m_Content = #{p_m_Content}, p_m_Date=(select to_char(sysdate, 'YYYY/MM/DD/ HH24:MI:SS') from dual)
+		WHERE p_m_Num=#{p_m_Num}
+	</update>
+
+</mapper>

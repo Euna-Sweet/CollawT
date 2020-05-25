@@ -1,0 +1,37 @@
+@charset "utf-8";
+/* CSS Document */
+
+@font-face {
+    font-family: 'DuruSansRegular';
+    src: url('../fonts/durusans-regular-webfont.eot');
+    src: url('../fonts/durusans-regular-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/durusans-regular-webfont.woff') format('woff'),
+         url('../fonts/durusans-regular-webfont.ttf') format('truetype'),
+         url('../fonts/durusans-regular-webfont.svg#DuruSansRegular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'nanumGothicWeb';
+	src: url('../fonts/nanumGothicWeb.eot');
+    src: url('../fonts/nanumGothicWeb.eot?#iefix') format('embedded-opentype')
+		 url('../fonts/nanumGothicWeb.woff') format('woff'), 
+		 url('../fonts/nanumGothicWeb.ttf') format('truetype'), 
+		 url('../fonts/nanumGothicWeb.svg#DroidSerifRegular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'nanumMyungjoWeb';
+	src: url('../fonts/nanumMyungjoWeb.eot');
+    src: url('../fonts/nanumMyungjoWeb.eot?#iefix') format('embedded-opentype')
+		 url('../fonts/nanumMyungjoWeb.woff') format('woff'), 
+		 url('../fonts/nanumMyungjoWeb.ttf') format('truetype'), 
+		 url('../fonts/nanumMyungjoWeb.svg#DroidSerifRegular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+

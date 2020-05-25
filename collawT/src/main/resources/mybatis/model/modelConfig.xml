@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration 	PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+	<typeAliases>
+	<!--  강사님 알리아스 -->
+		<typeAlias type="project.hm.hmp001_d001.vo.Hmp001_d001VO"  alias="hmp001_d001VO" />
+		<typeAlias type="project.hm.hmp001_d002.vo.Hmp001_d002VO"  alias="hmp001_d002VO" />
+		<typeAlias type="project.hm.hmp001_d003.vo.Hmp001_d003VO"  alias="hmp001_d003VO" />
+		<typeAlias type="project.hm.hmp002_d001.vo.Hmp002_d001VO"  alias="hmp002_d001VO" />
+		
+	<!-- collaw-T 알리아스 -->
+		<!-- 정하 -->
+		<typeAlias type="project.jeongha.member.vo.MemberVO" alias="MemberVO" />
+		<typeAlias type="project.jeongha.vote.vo.VoteVO" alias="VoteVO" />
+		<typeAlias type="project.jeongha.reply.vo.VoteReplyVO" alias="VoteReplyVO" />
+		<typeAlias type="project.jeongha.question.vo.QuestionVO" alias="QuestionVO" />
+		
+		<!-- 은아 -->
+		<typeAlias type="project.euna.issue.vo.IssueVO" alias="IssueVO" />
+		<typeAlias type="project.euna.reply.vo.ReplyVO" alias="ReplyVO" />
+		<typeAlias type="project.euna.appendix.vo.AppendixVO" alias="AppendixVO" />
+		<typeAlias type="project.euna.personal.vo.PersonalVO" alias="PersonalVO" />
+		<typeAlias type="project.euna.personal.vo.Personal_appendixVO" alias="Personal_appendixVO" />
+		<typeAlias type="project.euna.personal.vo.Personal_memoVO" alias="Personal_memoVO" />
+		<typeAlias type="project.euna.whole_search.vo.SearchVO" alias="SearchVO" />
+		
+		<!-- 동윤 -->
+		<typeAlias type="project.notify.vo.NotifyVO" alias="NotifyVO" />
+		
+		<!-- 성호 -->
+		<typeAlias type="project.sungho.comember.vo.ComemberVO" alias="ComemberVO" />
+		<typeAlias type="project.sungho.cowork.vo.CoworkVO" alias="CoworkVO" />
+		<typeAlias type="project.sungho.apply.vo.ApplyVO" alias="ApplyVO" />
+		
+		
+	</typeAliases> 
+</configuration>

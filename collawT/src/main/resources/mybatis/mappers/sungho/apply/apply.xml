@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="apply">
+	<resultMap id="applyResult01" type="java.util.Map">
+		<result property="c_Id" column="c_Id"  />
+		<result property="mem_Id" column="mem_Id" />
+		<result property="ap_Date" column="ap_Date" />
+		<result property="ap_Yn" column="ap_Yn" />
+		<result property="ap_Status" column="ap_Status" />
+		<result property="c_Name" column="c_Name" />
+		<result property="invite" column="invite" />
+		<result property="mem_Name" column="mem_Name" />
+		
+		
+	</resultMap>
+	
+	<select id="searchList" resultMap="applyResult01" parameterType="java.util.Map"> 
+      <![CDATA[
+         select a.c_Id, a.mem_Id, a.ap_Date, a.ap_Yn, a.ap_Status,a.invite, b.c_Name, c.mem_Name
+         from apply_mem a, co_work b, member c
+         
+       
+      ]]>
+		<where>
+		a.c_Id = b.c_Id
+		and a.invite = c.mem_Id	
+			<if test=" mem_Id != ''  and  mem_Id != null">
+			and	a.mem_Id = #{mem_Id}
+			</if>
+		</where>
+		  order by ap_Date desc
+	</select>
+	
+	
+	<insert id="insertApply" parameterType="java.util.Map">
+		insert into apply_mem(c_Id, mem_Id, ap_Date, ap_Yn, ap_Status, invite) 
+		values(#{c_Id}, #{mem_Id}, (select to_char(sysdate, 'YYYY/MM/DD/ HH24:MI:SS') from dual), 'waiting', 1, #{invite})
+	</insert>	
+	
+	
+	<delete id="deleteApply" parameterType="java.util.Map">
+		delete from apply_mem
+		 <where>
+	   <choose>
+	   		<when test ="c_Id != '' and c_Id != null and mem_Id != ''  and  mem_Id != null">
+	   		c_Id = #{c_Id} and mem_Id = #{mem_Id}
+	   		</when>
+	   		<when test ="c_Id != '' and c_Id != null">
+	   		c_Id = #{c_Id}
+	   		</when>
+	   		<when test="mem_Id != ''  and  mem_Id != null">
+	   		mem_Id = #{mem_Id}
+	   		</when>
+	   </choose>
+	  </where>
+	</delete>
+	
+	<update id="updateApply" parameterType="java.util.Map">
+		update co_work
+		set  c_Name = #{c_Name}
+		   , c_Comment = #{c_Comment}
+		   , mem_Id = #{mem_Id}
+		   , c_Category = #{c_Category}
+		where c_Id = #{c_Id}
+	</update>
+	
+	
+	<select id="memberCheck" parameterType="String" resultType="int">
+      <![CDATA[
+		select count(*) from member where mem_Id = #{mem_Id}
+		]]>
+	</select>
+	
+	<update id="acceptApply" parameterType="java.util.Map">
+	 <![CDATA[
+	  UPDATE APPLY_MEM
+	 SET AP_YN = 'yes'
+	 where c_Id = #{c_Id}
+	 and mem_Id = #{mem_Id}
+	 
+	 ]]>
+	</update>
+	
+	<update id="rejectApply" parameterType="java.util.Map">
+	 <![CDATA[
+	 DELETE FROM APPLY_MEM
+	 where c_Id = #{c_Id}
+	 and mem_Id = #{mem_Id}
+	 ]]>
+	</update>
+
+</mapper>

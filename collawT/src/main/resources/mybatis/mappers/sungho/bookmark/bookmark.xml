@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="bookmark">
+	<resultMap id="bookmarkResult01" type="java.util.Map">
+		<result property="c_Id" column="c_Id"  />
+		<result property="c_Name" column="c_Name" />
+		<result property="mem_Id" column="mem_Id" />
+		<result property="mem_Name" column="mem_Name" />
+		<result property="i_Num" column="i_Num" />
+		<result property="i_Name" column="i_Name" />
+		<result property="book_Date" column="book_Date" />
+		
+	</resultMap>
+	
+	<select id="searchList" resultMap="bookmarkResult01" parameterType="java.util.Map"> 
+      <![CDATA[
+         	select i.i_Name , i.i_Num, i.mem_Id , m.mem_Name, c.c_Name , i.c_Id
+			from issue i, bookmark b, member m , co_work c
+       
+      ]]>
+		<where>
+			i.i_Num = b.i_Num
+			and m.mem_Id = i.mem_Id
+			and c.c_Id =  i.c_Id
+			<if test=" mem_Id != ''  and  mem_Id != null">
+			and b.mem_id = #{mem_Id}
+			</if>
+		</where>
+		order by b.book_Date desc
+	</select>
+	
+	<insert id="insertBookmark" parameterType="java.util.Map" >
+		insert into BOOKMARK(mem_Id, i_Num, book_Date) 
+		values(#{mem_Id},#{i_Num},(select to_char(sysdate, 'YYYY/MM/DD/ HH24:MI:SS') from dual))
+	</insert>	
+	
+	
+	<delete id="deleteBookmark" parameterType="java.util.Map">
+		delete from BOOKMARK
+		where mem_Id = #{mem_Id}
+		and i_Num = #{i_Num}
+	</delete>
+	
+	<update id="updateBookmark" parameterType="java.util.Map">
+		update co_work
+		set  c_Name = #{c_Name}
+		   , c_Comment = #{c_Comment}
+		   , mem_Id = #{mem_Id}
+		   , c_Category = #{c_Category}
+		where c_Id = #{c_Id}
+	</update>
+	
+	
+	<select id="bookmarkCheck" parameterType="String" resultType="int">
+      <![CDATA[
+		select count(*) from BOOKMARK
+		]]>
+	<where>
+		mem_Id = #{mem_Id}
+		and	i_Num = #{i_Num}
+	</where>
+	</select>
+
+</mapper>

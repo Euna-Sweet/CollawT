@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="personalmanager">
+	<resultMap id="managerResult01" type="java.util.Map">
+		<result property="p_i_Name" column="p_i_Name" />
+		<result property="p_Num" column="p_Num" />
+		<result property="mem_Id" column="mem_Id" />
+		<result property="p_i_Date" column="p_i_Date" />
+		<result property="c_Id" column="c_Id" />
+		<result property="p_i_Content" column="p_i_Content" jdbcType="CLOB" javaType="java.lang.String"/>
+		
+	</resultMap>
+
+	<select id="searchList" resultMap="managerResult01" parameterType="java.util.Map"> 
+      <![CDATA[
+         select p_Num, p_i_Name, mem_Id,  SUBSTR(p_i_Date, 1, 10) as p_i_Date, p_i_Content
+         from   personal
+      ]]>
+			<choose>
+			<!-- 3개 -->
+				<when test="mem_Id != '' and mem_Id != null and p_i_Name != '' and p_i_Name != null and p_i_Content != '' and p_i_Content != null" >
+					<![CDATA[
+					and REPLACE(upper(REGEXP_REPLACE(mem_Id,'<[^>]*>|\&([^;])*;', '')),' ','') like CONCAT('%' || REPLACE(upper(#{mem_Id}),' ',''), '%')
+					and REPLACE(upper(REGEXP_REPLACE(p_i_Name,'<[^>]*>|\&([^;])*;', '')),' ','') like CONCAT('%' || REPLACE(upper(#{p_i_Name}),' ',''), '%')
+					and REPLACE(upper(REGEXP_REPLACE(p_i_Content,'<[^>]*>|\&([^;])*;', '')),' ','') like CONCAT('%' || REPLACE(upper(#{p_i_Content}),' ',''), '%')
+					]]>
+				</when>
+			<!-- 2개 -->
+				<when test="mem_Id != '' and mem_Id != null and p_i_Name != '' and p_i_Name != null" >
+					<![CDATA[
+					and REPLACE(upper(REGEXP_REPLACE(mem_Id,'<[^>]*>|\&([^;])*;', '')),' ','') like CONCAT('%' || REPLACE(upper(#{mem_Id}),' ',''), '%')
+					and REPLACE(upper(REGEXP_REPLACE(p_i_Name,'<[^>]*>|\&([^;])*;', '')),' ','') like CONCAT('%' || REPLACE(upper(#{p_i_Name}),' ',''), '%')
+					]]>
+				</when>
+				<when test="mem_Id != '' and mem_Id != null and p_i_Content != '' and p_i_Content != null" >
+					<![CDATA[
+					and REPLACE(upper(REGEXP_REPLACE(mem_Id,'<[^>]*>|\&([^;])*;', '')),' ','') like CONCAT('%' || REPLACE(upper(#{mem_Id}),' ',''), '%')
+					and REPLACE(upper(REGEXP_REPLACE(p_i_Content,'<[^>]*>|\&([^;])*;', '')),' ','') like CONCAT('%' || REPLACE(upper(#{p_i_Content}),' ',''), '%')
+					]]>
+				</when>
+				<when test="p_i_Name != '' and p_i_Name != null and p_i_Content != '' and p_i_Content != null" >
+					<![CDATA[
+					and REPLACE(upper(REGEXP_REPLACE(p_i_Name,'<[^>]*>|\&([^;])*;', '')),' ','') like CONCAT('%' || REPLACE(upper(#{p_i_Name}),' ',''), '%')
+					and REPLACE(upper(REGEXP_REPLACE(p_i_Content,'<[^>]*>|\&([^;])*;', '')),' ','') like CONCAT('%' || REPLACE(upper(#{p_i_Content}),' ',''), '%')
+					]]>
+				</when>
+			<!-- 1개 -->
+				<when test="mem_Id != '' and mem_Id != null" >
+					<![CDATA[
+					and REPLACE(upper(REGEXP_REPLACE(mem_Id,'<[^>]*>|\&([^;])*;', '')),' ','') like CONCAT('%' || REPLACE(upper(#{mem_Id}),' ',''), '%')
+					]]>
+				</when>
+				<when test="p_i_Name != '' and p_i_Name != null" >
+					<![CDATA[
+					and REPLACE(upper(REGEXP_REPLACE(p_i_Name,'<[^>]*>|\&([^;])*;', '')),' ','') like CONCAT('%' || REPLACE(upper(#{p_i_Name}),' ',''), '%')
+					]]>
+				</when>
+				<when test="p_i_Content != '' and p_i_Content != null" >
+					<![CDATA[
+					and REPLACE(upper(REGEXP_REPLACE(p_i_Content,'<[^>]*>|\&([^;])*;', '')),' ','') like CONCAT('%' || REPLACE(upper(#{p_i_Content}),' ',''), '%')
+					]]>
+				</when>
+
+
+
+			</choose>
+		
+	</select>
+	
+	
+	<!-- 회원정보는 별명만 변경가능하게 했음 -->
+	<update id="updateData" parameterType="java.util.Map">
+		update member
+		set  mem_Name = #{mem_Name}
+		where mem_Id = #{mem_Id}
+	</update>	
+	
+	<!-- 이슈는 insert 안되는 게 맞는 것 같음 -->
+<!-- 	<insert id="insertData" parameterType="java.util.Map">
+	 시퀀스랑 비슷하게 적용 버그생기니 만들어놓은 시퀀스 사용하세요
+	    <selectKey  resultType="string" keyProperty="key_id" order="BEFORE">
+	       SELECT COUNT(id)+1 FROM t_member
+	    </selectKey> 
+		insert into (mem_Id, mem_Pwd, mem_Name) values(#{mem_Id}, #{mem_Pwd}, #{mem_Name})
+	</insert>	 -->
+	
+	
+	
+	<!-- 삭제 -->
+	<delete id="deleteData" parameterType="java.util.Map">
+		delete personal
+		where p_Num = #{p_Num}
+	</delete>	 
+</mapper>

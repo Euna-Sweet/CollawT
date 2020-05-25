@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+      PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="chat">
+	<resultMap id="chatResult01" type="java.util.Map">
+		<result property="chat_Id" column="chat_Id" />
+		<result property="mem_Id" column="mem_Id" />
+		<result property="mem_Name" column="mem_Name" />
+		<result property="target_Id" column="target_Id" />
+		<result property="message" column="message" />
+		<result property="chat_Date" column="chat_Date" />
+		<result property="chat_Stat" column="chat_Stat" />
+		<result property="chat_Count" column="chat_Count" />
+	</resultMap>
+
+	<select id="searchList" resultMap="chatResult01"
+		parameterType="java.util.Map"> 
+      <![CDATA[
+         SELECT c.* , m.mem_Name
+			FROM CHATMESSAGE c , MEMBER m 
+      ]]>
+		<where>
+			<if test="target_Id != ''  and  target_Id != null">
+				c.mem_Id = m.mem_Id
+				AND c.mem_Id IN (#{mem_Id} , #{target_Id})
+				AND c.target_Id IN (#{mem_Id} , #{target_Id})
+			</if>
+		</where>
+		order by chat_Date
+	</select>
+
+	<insert id="insertChat" parameterType="java.util.Map">
+		insert into
+		CHATMESSAGE(chat_Id, mem_Id, target_Id, message, chat_Date, chat_Stat)
+		values(CHATMESSAGE_CHAT_ID.NEXTVAL, #{mem_Id}, #{target_Id},
+		#{message},
+		(select to_char(sysdate, 'YYYY/MM/DD/ HH24:MI:SS') from dual), '0')
+	</insert>
+
+	<insert id="logoutinsertChat" parameterType="java.util.Map">
+		insert into
+		CHATMESSAGE(chat_Id, mem_Id, target_Id, message, chat_Date, chat_Stat)
+		values(CHATMESSAGE_CHAT_ID.NEXTVAL, #{mem_Id}, #{target_Id},
+		#{message},
+		(select to_char(sysdate, 'YYYY/MM/DD/ HH24:MI:SS') from dual), '1')
+	</insert>
+
+
+	<update id="readingMsg" parameterType="java.util.Map">
+		update CHATMESSAGE
+		set chat_stat = 0
+		<where>
+			<if test="target_Id != ''  and  target_Id != null">
+				mem_Id IN (#{mem_Id} , #{target_Id})
+				AND target_Id IN (#{mem_Id} , #{target_Id})
+			</if>
+		</where>
+	</update>
+
+	<select id="msgCount" resultMap="chatResult01" parameterType="java.util.Map"> 
+      <![CDATA[
+		select mem_Id, count(*) as chat_Count
+		from CHATMESSAGE
+		]]>
+		<where>
+			<if test="mem_Id != ''  and  mem_Id != null">
+				target_Id = #{mem_Id}
+			</if>
+		</where>
+		AND chat_stat = '1'
+		group by mem_Id
+	</select>
+	
+	<select id="totalCount" resultType="int" parameterType="java.util.Map"> 
+      <![CDATA[
+		select count(*)
+		from CHATMESSAGE
+		]]>
+		<where>
+			<if test="mem_Id != ''  and  mem_Id != null">
+				target_Id = #{mem_Id}
+			</if>
+		</where>
+		AND chat_stat = '1'
+	</select>
+	
+</mapper>
