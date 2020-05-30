@@ -17,7 +17,7 @@ collawT는 이러한 패러다임을 인식하고 슬랙, 잔디, 트렐로 등 
 <br><br>
 
 <b>4. Project 특징<br></b>
-A. AWS 기반 클라우드 서비스 : AWS EC2와 RDS활용한 사이트입니다.<br>
+A. AWS 기반 클라우드 서비스 : AWS EC2와 RDS를 활용한 사이트입니다.<br>
 B. IBSheet로 손쉬운 관리 : 관리자 페이지에 IBSheet API를 사용하였습니다.<br>
 C. 반응형 웹&앱 : BootStrap을 이용한 반응형 웹&앱 사이트입니다.<br>
 D. 채팅 지원 : 웹소켓을 사용한 채팅이 가능합니다.
