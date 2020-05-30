@@ -39,7 +39,6 @@ A. 전체 프로세스<br>
 B. 회원가입 / 권한 체크 / 마이페이지 (<a href = "https://www.youtube.com/watch?v=_XaCad1R1MM&feature=youtu.be" target="_blank">시연 영상 바로가기</a>)<br>
   <img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fk.kakaocdn.net%2Fdn%2FcpEnWQ%2FbtqEvgEF6jq%2FIRTR8Bo5GPWuC5ZWagbzV0%2Fimg.jpg"/>
 <br><br>
-<embed width="560px" height="315px" src="https://www.youtube.com/embed/_XaCad1R1MM" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></embed>
 
 C. 협업공간 생성 / 초대 / 채팅 (<a href = "https://www.youtube.com/watch?v=sFZmYskYmhE&feature=youtu.be" target="_blank">시연 영상 바로가기</a>)<br>
   <img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fk.kakaocdn.net%2Fdn%2FRkU4D%2FbtqEwIUmNO5%2FIZ4XbXRxqmJXkcg0cKkvi0%2Fimg.jpg"/>
