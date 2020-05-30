@@ -14,16 +14,18 @@ Collaw-T (Collawboration + work + Team)<br>
 또한 사내 그룹웨어는 모바일을 지원하지 못하는데, 최근 기업들은 모바일과 원격 근무 지원이 기업 생산성의 향상에 영향을 미친다는 사실을 인식하기 시작했습니다.
 최근에는 코로나 바이러스로 인해 재택 근무가 활성화되면서 협업툴의 사용이 증가하고 있습니다.
 collawT는 이러한 패러다임을 인식하고 슬랙, 잔디, 트렐로 등 여러 협업툴들의 장점을 모은 효율적인 협업툴로서 기획되었습니다.<br>
-<img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fk.kakaocdn.net%2Fdn%2Fb6kaL1%2FbtqEu6Cmjzb%2FlVSwqyWqRhXXp3zhxDI1j0%2Fimg.jpg"/>
 <br><br>
 
 
 3. Project 특징<br>
-<img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fk.kakaocdn.net%2Fdn%2FcAj1IB%2FbtqEv0g6akM%2FZK5RQShZtZTsjCGRRmIg3k%2Fimg.jpg"/>
+A. AWS 기반 클라우드 서비스 : AWS EC2와 RDS활용한 사이트입니다.<br>
+B. IBSheet로 손쉬운 관리 : 관리자 페이지에 IBSheet API를 사용하였습니다.<br>
+C. 반응형 웹&앱 : BootStrap을 이용한 반응형 웹&앱 사이트입니다.<br>
+D. 채팅 지원 : 웹소켓을 사용한 채팅이 가능합니다.
 <br><br>
   
 4. 개발 일정<br>
-<img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fk.kakaocdn.net%2Fdn%2FctlkIB%2FbtqEwfY8xQY%2FHWxQqo5Z8puclCMOimiqYk%2Fimg.jpg"/>
+<img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fk.kakaocdn.net%2Fdn%2FctzG0R%2FbtqEv69e3T9%2FYhlcA8YdgeSXr4eiwKvk1K%2Fimg.jpg"/>
 <br><br>
 
 5. ERD-DB모델링<br>
@@ -32,4 +34,32 @@ collawT는 이러한 패러다임을 인식하고 슬랙, 잔디, 트렐로 등 
 <br><br>
 
 6. 프로세스 및 화면
-  a) 전체 프로세스
+A. 전체 프로세스
+  <img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fk.kakaocdn.net%2Fdn%2Fbg6OYf%2FbtqEw2LAtV9%2FlJK1IKimJBZD8EYocutGiK%2Fimg.jpg"/>
+<br><br>
+
+B. 회원가입 / 권한 체크 / 마이페이지
+  <img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fk.kakaocdn.net%2Fdn%2FcpEnWQ%2FbtqEvgEF6jq%2FIRTR8Bo5GPWuC5ZWagbzV0%2Fimg.jpg"/>
+<br><br>
+
+C. 협업공간 생성 / 초대 / 채팅
+  <img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fk.kakaocdn.net%2Fdn%2FRkU4D%2FbtqEwIUmNO5%2FIZ4XbXRxqmJXkcg0cKkvi0%2Fimg.jpg"/>
+<br><br>
+
+D. 이슈 작성 / 북마크 / 내 공간
+  <img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fk.kakaocdn.net%2Fdn%2FABEWS%2FbtqEvg5P3Wm%2F57InG3k9pTGMswhjYQ1tv0%2Fimg.jpg"/>
+<br><br>
+
+E. 투표
+  <img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fk.kakaocdn.net%2Fdn%2FQI9XP%2FbtqEu63mpfT%2Fe7kYXTImaQjKHGGqYbXvv0%2Fimg.jpg"/>
+<br><br>
+
+F. 검색 / 파일함
+  <img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fk.kakaocdn.net%2Fdn%2FcLSXj4%2FbtqEwI7Wgtl%2FKzPIasIqH2kzqvKG61qISK%2Fimg.jpg"/>
+<br><br>
+
+G. 관리자
+  <img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fk.kakaocdn.net%2Fdn%2FbRsveZ%2FbtqEu5QVjyB%2FLQkcbcl4b1ydOkUYfhjZR0%2Fimg.jpg"/>
+<br><br>
+
+감사합니다 :)
