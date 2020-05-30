@@ -16,7 +16,6 @@ Collaw-T (Collawboration + work + Team)<br>
 collawT는 이러한 패러다임을 인식하고 슬랙, 잔디, 트렐로 등 여러 협업툴들의 장점을 모은 효율적인 협업툴로서 기획되었습니다.<br>
 <br><br>
 
-
 <b>4. Project 특징<br></b>
 A. AWS 기반 클라우드 서비스 : AWS EC2와 RDS활용한 사이트입니다.<br>
 B. IBSheet로 손쉬운 관리 : 관리자 페이지에 IBSheet API를 사용하였습니다.<br>
@@ -33,32 +32,32 @@ D. 채팅 지원 : 웹소켓을 사용한 채팅이 가능합니다.
 <img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fk.kakaocdn.net%2Fdn%2FDqD7Q%2FbtqEviCuxCa%2FRrnBKUJK7xgXasEVFM1tpk%2Fimg.png"/>
 <br><br>
 
-<b>7. 프로세스 및 화면</b>
-A. 전체 프로세스
+<b>7. 프로세스 및 화면</b><br>
+A. 전체 프로세스<br>
   <img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fk.kakaocdn.net%2Fdn%2Fbg6OYf%2FbtqEw2LAtV9%2FlJK1IKimJBZD8EYocutGiK%2Fimg.jpg"/>
 <br><br>
 
-B. 회원가입 / 권한 체크 / 마이페이지
+B. 회원가입 / 권한 체크 / 마이페이지 (<a href = "https://www.youtube.com/watch?v=_XaCad1R1MM&feature=youtu.be" target="_blank">시연 영상 바로가기</a>)<br>
   <img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fk.kakaocdn.net%2Fdn%2FcpEnWQ%2FbtqEvgEF6jq%2FIRTR8Bo5GPWuC5ZWagbzV0%2Fimg.jpg"/>
 <br><br>
 
-C. 협업공간 생성 / 초대 / 채팅
+C. 협업공간 생성 / 초대 / 채팅 (<a href = "https://www.youtube.com/watch?v=sFZmYskYmhE&feature=youtu.be" target="_blank">시연 영상 바로가기</a>)<br>
   <img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fk.kakaocdn.net%2Fdn%2FRkU4D%2FbtqEwIUmNO5%2FIZ4XbXRxqmJXkcg0cKkvi0%2Fimg.jpg"/>
 <br><br>
 
-D. 이슈 작성 / 북마크 / 내 공간
+D. 이슈 작성 / 북마크 / 내 공간 (<a href = "https://www.youtube.com/watch?v=a6npiF0wsDM&feature=youtu.be" target="_blank">시연 영상 바로가기</a>)<br>
   <img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fk.kakaocdn.net%2Fdn%2FABEWS%2FbtqEvg5P3Wm%2F57InG3k9pTGMswhjYQ1tv0%2Fimg.jpg"/>
 <br><br>
 
-E. 투표
+E. 투표 (<a href = "https://www.youtube.com/watch?v=2s-MZ2Bha8Q&feature=youtu.be" target="_blank">시연 영상 바로가기</a>)<br>
   <img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fk.kakaocdn.net%2Fdn%2FQI9XP%2FbtqEu63mpfT%2Fe7kYXTImaQjKHGGqYbXvv0%2Fimg.jpg"/>
 <br><br>
 
-F. 검색 / 파일함
+F. 검색 / 파일함 (<a href = "https://www.youtube.com/watch?v=sBjMHsTD6hc&feature=youtu.be" target="_blank">시연 영상 바로가기</a>)<br>
   <img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fk.kakaocdn.net%2Fdn%2FcLSXj4%2FbtqEwI7Wgtl%2FKzPIasIqH2kzqvKG61qISK%2Fimg.jpg"/>
 <br><br>
 
-G. 관리자
+G. 관리자 (<a href = "https://www.youtube.com/watch?v=5lJTxEPjenw&feature=youtu.be" target="_blank">시연 영상 바로가기</a>)<br>
   <img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fk.kakaocdn.net%2Fdn%2FbRsveZ%2FbtqEu5QVjyB%2FLQkcbcl4b1ydOkUYfhjZR0%2Fimg.jpg"/>
 <br><br>
 
