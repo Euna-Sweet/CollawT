@@ -4,7 +4,7 @@ Collaw-T (Collawboration + work + Team)<br><br>
 <b>2. Team 구성<br></b>
 팀장 김성호()<br>
 팀원 안정하()<br>
-팀원 최은아(<a href = "http://github.com/Euna-Sweet" onclick="window.open("http://github.com/Euna-Sweet")">github.com/Euna-Sweet</a>)<br>
+팀원 최은아(<a href = "http://github.com/Euna-Sweet" onclick="window.open(this.href, '_blank')">github.com/Euna-Sweet</a>)<br>
 팀원 한동윤()<br><br>
 
 2. 기획의도<br>
