@@ -8,7 +8,7 @@ Collaw-T (Collawboration + work + Team)<br>
 팀원 최은아(<a href = "http://github.com/Euna-Sweet" target="_blank">github.com/Euna-Sweet</a>)<br>
 팀원 한동윤(<a href = "https://github.com/cosycolor" target="_blank">github.com/cosycolor</a>)<br><br>
 
-3. 기획의도<br>
+<b>3. 기획의도<br></b>
 최근 글로벌 기업을 중심으로 업무 방식이 변화하면서 협업툴의 시장 규모가 커지고 있습니다.
 일방향 결재에서 쌍방향 협업으로 업무 방식이 변화하고, 빠르게 변화하는 환경에 대처할 수 있도록 신속한 의사소통의 필요해졌기 때문입니다.
 또한 사내 그룹웨어는 모바일을 지원하지 못하는데, 최근 기업들은 모바일과 원격 근무 지원이 기업 생산성의 향상에 영향을 미친다는 사실을 인식하기 시작했습니다.
@@ -17,23 +17,23 @@ collawT는 이러한 패러다임을 인식하고 슬랙, 잔디, 트렐로 등 
 <br><br>
 
 
-3. Project 특징<br>
+<b>4. Project 특징<br></b>
 A. AWS 기반 클라우드 서비스 : AWS EC2와 RDS활용한 사이트입니다.<br>
 B. IBSheet로 손쉬운 관리 : 관리자 페이지에 IBSheet API를 사용하였습니다.<br>
 C. 반응형 웹&앱 : BootStrap을 이용한 반응형 웹&앱 사이트입니다.<br>
 D. 채팅 지원 : 웹소켓을 사용한 채팅이 가능합니다.
 <br><br>
   
-4. 개발 일정<br>
+<b>5. 개발 일정<br></b>
 <img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fk.kakaocdn.net%2Fdn%2FctzG0R%2FbtqEv69e3T9%2FYhlcA8YdgeSXr4eiwKvk1K%2Fimg.jpg"/>
 <br><br>
 
-5. ERD-DB모델링<br>
+<b>6. ERD-DB모델링<br></b>
 <img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fk.kakaocdn.net%2Fdn%2Fb6UtR8%2FbtqEwSoRTAo%2FLPeYO6AXyzIQrkoUpYIRFk%2Fimg.png"/>
 <img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fk.kakaocdn.net%2Fdn%2FDqD7Q%2FbtqEviCuxCa%2FRrnBKUJK7xgXasEVFM1tpk%2Fimg.png"/>
 <br><br>
 
-6. 프로세스 및 화면
+<b>7. 프로세스 및 화면</b>
 A. 전체 프로세스
   <img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fk.kakaocdn.net%2Fdn%2Fbg6OYf%2FbtqEw2LAtV9%2FlJK1IKimJBZD8EYocutGiK%2Fimg.jpg"/>
 <br><br>
