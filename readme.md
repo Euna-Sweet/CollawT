@@ -20,13 +20,16 @@ collawT는 이러한 패러다임을 인식하고 슬랙, 잔디, 트렐로 등 
 
 3. Project 특징<br>
 <img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fk.kakaocdn.net%2Fdn%2FcAj1IB%2FbtqEv0g6akM%2FZK5RQShZtZTsjCGRRmIg3k%2Fimg.jpg"/>
+<br><br>
   
 4. 개발 일정<br>
 <img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fk.kakaocdn.net%2Fdn%2FctlkIB%2FbtqEwfY8xQY%2FHWxQqo5Z8puclCMOimiqYk%2Fimg.jpg"/>
+<br><br>
 
 5. ERD-DB모델링<br>
 <img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fk.kakaocdn.net%2Fdn%2Fb6UtR8%2FbtqEwSoRTAo%2FLPeYO6AXyzIQrkoUpYIRFk%2Fimg.png"/>
 <img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fk.kakaocdn.net%2Fdn%2FDqD7Q%2FbtqEviCuxCa%2FRrnBKUJK7xgXasEVFM1tpk%2Fimg.png"/>
+<br><br>
 
 6. 프로세스 및 화면
   a) 전체 프로세스
