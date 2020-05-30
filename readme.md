@@ -28,8 +28,7 @@ D. 채팅 지원 : 웹소켓을 사용한 채팅이 가능합니다.
 <br><br>
 
 <b>6. ERD-DB모델링<br></b>
-<img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fk.kakaocdn.net%2Fdn%2Fb6UtR8%2FbtqEwSoRTAo%2FLPeYO6AXyzIQrkoUpYIRFk%2Fimg.png"/>
-<img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fk.kakaocdn.net%2Fdn%2FDqD7Q%2FbtqEviCuxCa%2FRrnBKUJK7xgXasEVFM1tpk%2Fimg.png"/>
+<img src="https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fk.kakaocdn.net%2Fdn%2FbbX3w2%2FbtqEwfLIEho%2F9W6KVurmlw209KkGkfqUrK%2Fimg.png"/>
 <br><br>
 
 <b>7. 프로세스 및 화면</b><br>
