@@ -1,6 +1,5 @@
 <b>1. Project명<br></b>
 Collaw-T (Collawboration + work + Team)<br>
-<a href = "http://collawt.site" target="_blank">collawt.site 사이트 바로가기</a><br><br>
 
 <b>2. Team 구성<br></b>
 팀장 김성호(<a href = "http://github.com/S-Tiger" target="_blank">github.com/S-Tiger</a>)<br>
